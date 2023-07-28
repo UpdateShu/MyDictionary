@@ -9,15 +9,15 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 class MainViewModel(
 ) : BaseViewModel<AppState>()
 {
-    private lateinit var interaptor: InteractorInterface<AppState>
+    private lateinit var interactor: InteractorInterface<AppState>
 
-    override fun setInteractor(interaptor: InteractorInterface<AppState>) {
-        this.interaptor = interaptor
+    override fun setInteractor(interactor: InteractorInterface<AppState>) {
+        this.interactor = interactor
     }
 
     override fun getDataViewModel(word: String, isOnline: Boolean): LiveData<AppState> {
         compositeDisposable.add(
-            interaptor.getDataInteractor(word, isOnline)
+            interactor.getDataInteractor(word, isOnline)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe {
@@ -31,7 +31,7 @@ class MainViewModel(
                         liveData.postValue(AppState.Error(error))
                     },
                     onComplete = {
-                        //liveData.postValue(AppState.Loading(1))
+                        liveData.postValue(AppState.Loading(1))
                     }
                 )
         )
