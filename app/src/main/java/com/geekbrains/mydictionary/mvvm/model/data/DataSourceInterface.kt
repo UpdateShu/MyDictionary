@@ -1,4 +1,4 @@
-package com.geekbrains.mydictionary.mvp.model.data
+package com.geekbrains.mydictionary.mvvm.model.data
 
 import io.reactivex.rxjava3.core.Observable
 

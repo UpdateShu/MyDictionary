@@ -1,21 +1,28 @@
-package com.geekbrains.mydictionary.ui
+package com.geekbrains.mydictionary.mvvm.view
 
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.geekbrains.mydictionary.R
 import com.geekbrains.mydictionary.databinding.ActivityMainBinding
+import com.geekbrains.mydictionary.mvvm.model.data.Repository
+import com.geekbrains.mydictionary.mvvm.model.data.retrofit.RemoteDataSource
+import com.geekbrains.mydictionary.mvvm.model.data.retrofit.RetrofitDataSource
+import com.geekbrains.mydictionary.mvvm.model.data.room.LocalDataSource
+import com.geekbrains.mydictionary.mvvm.model.data.room.RoomDataSource
 
-import com.geekbrains.mydictionary.mvp.model.entities.AppState
-import com.geekbrains.mydictionary.mvp.model.entities.Word
+import com.geekbrains.mydictionary.mvvm.model.entities.AppState
+import com.geekbrains.mydictionary.mvvm.model.entities.Word
+import com.geekbrains.mydictionary.mvvm.viewmodel.MainInteractor
 
-import com.geekbrains.mydictionary.mvp.presenter.MainPresenter
-import com.geekbrains.mydictionary.mvp.presenter.PresenterInterface
-import com.geekbrains.mydictionary.mvp.view.ViewInterface
+import com.geekbrains.mydictionary.mvvm.viewmodel.MainViewModel
+import com.geekbrains.mydictionary.utils.isOnline
 
 import com.google.android.material.snackbar.Snackbar
 
@@ -26,7 +33,15 @@ class MainActivity : AppCompatActivity(), ViewInterface {
 
     private var searchWord: String? = null
     private lateinit var binding: ActivityMainBinding
-    private lateinit var presenter: PresenterInterface
+
+    private val viewModel: MainViewModel by lazy {
+        ViewModelProvider(this).get(MainViewModel::class.java)
+    }
+
+    private val interactor: MainInteractor = MainInteractor(
+        Repository(RemoteDataSource(RetrofitDataSource())),
+        Repository(LocalDataSource(RoomDataSource()))
+    )
 
     private val adapter = MainRvAdapter(object : OnClickWord {
         override fun onClickWord(word: Word) {
@@ -34,17 +49,10 @@ class MainActivity : AppCompatActivity(), ViewInterface {
         }
     })
 
-    override fun onStart() {
-        presenter.onAttach(this)
-        super.onStart()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        presenter = MainPresenter()
 
         val recyclerView = binding.rvMainDictionary
         recyclerView.layoutManager = LinearLayoutManager(this@MainActivity,
@@ -56,15 +64,13 @@ class MainActivity : AppCompatActivity(), ViewInterface {
 
             searchWord = binding.etSearchWord.text?.toString()
             if (!searchWord.isNullOrEmpty()) {
-                presenter.getDataPresenter(searchWord!!,
-                    binding.root.isOnline(this@MainActivity))
+                viewModel.getDataViewModel(searchWord!!, binding.root.isOnline(this@MainActivity))
+                    .observe(this, Observer { state ->
+                        rangeData(state)
+                    })
             }
         }
-    }
-
-    override fun onStop() {
-        presenter.onDetach(this)
-        super.onStop()
+        viewModel.setInteractor(interactor)
     }
 
     override fun rangeData(state: AppState) {
@@ -98,7 +104,7 @@ class MainActivity : AppCompatActivity(), ViewInterface {
             if (isOnline) {
                 sb.setAction("Reload Online") {
                     if (!searchWord.isNullOrEmpty()) {
-                        presenter.getDataPresenter(searchWord!!, true)
+                        viewModel.getDataViewModel(searchWord!!, true)
                     } else {
                         showError(resources.getString(R.string.error_empty), false)
                     }
@@ -106,7 +112,7 @@ class MainActivity : AppCompatActivity(), ViewInterface {
             } else {
                 sb.setAction("Reload Local") {
                     if (!searchWord.isNullOrEmpty()) {
-                        presenter.getDataPresenter(searchWord!!, false)
+                        viewModel.getDataViewModel(searchWord!!, false)
                     } else {
                         showError(resources.getString(R.string.error_empty), false)
                     }

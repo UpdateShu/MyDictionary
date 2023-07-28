@@ -1,4 +1,4 @@
-package com.geekbrains.mydictionary.ui
+package com.geekbrains.mydictionary.utils
 
 import android.content.Context
 import android.net.ConnectivityManager

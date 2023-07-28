@@ -1,9 +1,9 @@
-package com.geekbrains.mydictionary.mvp.model.data.retrofit
+package com.geekbrains.mydictionary.mvvm.model.data.retrofit
 
-import com.geekbrains.mydictionary.mvp.model.api.DictionaryApi
-import com.geekbrains.mydictionary.mvp.model.data.DataSourceInterface
-import com.geekbrains.mydictionary.mvp.model.entities.SearchDTOItem
-import com.geekbrains.mydictionary.mvp.model.entities.Word
+import com.geekbrains.mydictionary.mvvm.model.api.DictionaryApi
+import com.geekbrains.mydictionary.mvvm.model.data.DataSourceInterface
+import com.geekbrains.mydictionary.mvvm.model.entities.SearchDTOItem
+import com.geekbrains.mydictionary.mvvm.model.entities.Word
 import io.reactivex.rxjava3.core.Observable
 
 import retrofit2.Retrofit

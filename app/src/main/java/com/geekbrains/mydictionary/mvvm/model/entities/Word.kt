@@ -1,4 +1,4 @@
-package com.geekbrains.mydictionary.mvp.model.entities
+package com.geekbrains.mydictionary.mvvm.model.entities
 
 import com.google.gson.annotations.SerializedName
 

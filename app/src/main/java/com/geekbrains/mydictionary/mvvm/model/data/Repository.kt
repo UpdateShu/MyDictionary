@@ -1,6 +1,6 @@
-package com.geekbrains.mydictionary.mvp.model.data
+package com.geekbrains.mydictionary.mvvm.model.data
 
-import com.geekbrains.mydictionary.mvp.model.entities.Word
+import com.geekbrains.mydictionary.mvvm.model.entities.Word
 import io.reactivex.rxjava3.core.Observable
 
 class Repository(private val dataSource: DataSourceInterface<List<Word>>) :

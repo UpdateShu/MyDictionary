@@ -1,4 +1,4 @@
-package com.geekbrains.mydictionary.mvp.presenter
+package com.geekbrains.mydictionary.mvvm.viewmodel
 
 import io.reactivex.rxjava3.core.Observable
 

@@ -1,8 +1,8 @@
-package com.geekbrains.mydictionary.mvp.presenter
+package com.geekbrains.mydictionary.mvvm.viewmodel
 
-import com.geekbrains.mydictionary.mvp.model.entities.AppState
-import com.geekbrains.mydictionary.mvp.model.entities.Word
-import com.geekbrains.mydictionary.mvp.model.data.RepositoryInterface
+import com.geekbrains.mydictionary.mvvm.model.entities.AppState
+import com.geekbrains.mydictionary.mvvm.model.entities.Word
+import com.geekbrains.mydictionary.mvvm.model.data.RepositoryInterface
 import io.reactivex.rxjava3.core.Observable
 
 class MainInteractor(

@@ -1,4 +1,4 @@
-package com.geekbrains.mydictionary.ui
+package com.geekbrains.mydictionary.mvvm.view
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 import com.geekbrains.mydictionary.R
 import com.geekbrains.mydictionary.databinding.ActivityMainRvItemBinding
-import com.geekbrains.mydictionary.mvp.model.entities.Word
+import com.geekbrains.mydictionary.mvvm.model.entities.Word
 
 class MainRvAdapter(val onClick: MainActivity.OnClickWord)
     : RecyclerView.Adapter<MainRvAdapter.MainRvViewHolder>() {
