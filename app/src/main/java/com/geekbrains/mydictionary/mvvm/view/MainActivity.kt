@@ -11,20 +11,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.geekbrains.mydictionary.R
 import com.geekbrains.mydictionary.databinding.ActivityMainBinding
-import com.geekbrains.mydictionary.mvvm.model.data.Repository
-import com.geekbrains.mydictionary.mvvm.model.data.retrofit.RemoteDataSource
-import com.geekbrains.mydictionary.mvvm.model.data.retrofit.RetrofitDataSource
-import com.geekbrains.mydictionary.mvvm.model.data.room.LocalDataSource
-import com.geekbrains.mydictionary.mvvm.model.data.room.RoomDataSource
-
 import com.geekbrains.mydictionary.mvvm.model.entities.AppState
 import com.geekbrains.mydictionary.mvvm.model.entities.Word
-import com.geekbrains.mydictionary.mvvm.viewmodel.MainInteractor
-
 import com.geekbrains.mydictionary.mvvm.viewmodel.MainViewModel
 import com.geekbrains.mydictionary.utils.isOnline
 
 import com.google.android.material.snackbar.Snackbar
+import dagger.android.AndroidInjection
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), ViewInterface {
     interface OnClickWord {
@@ -34,14 +28,10 @@ class MainActivity : AppCompatActivity(), ViewInterface {
     private var searchWord: String? = null
     private lateinit var binding: ActivityMainBinding
 
-    private val viewModel: MainViewModel by lazy {
-        ViewModelProvider(this).get(MainViewModel::class.java)
-    }
+    @Inject
+    internal lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private val interactor: MainInteractor = MainInteractor(
-        Repository(RemoteDataSource(RetrofitDataSource())),
-        Repository(LocalDataSource(RoomDataSource()))
-    )
+    lateinit var viewModel: MainViewModel
 
     private val adapter = MainRvAdapter(object : OnClickWord {
         override fun onClickWord(word: Word) {
@@ -50,15 +40,13 @@ class MainActivity : AppCompatActivity(), ViewInterface {
     })
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
+
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val recyclerView = binding.rvMainDictionary
-        recyclerView.layoutManager = LinearLayoutManager(this@MainActivity,
-            LinearLayoutManager.VERTICAL, false)
-        recyclerView.adapter = adapter
-
+        viewModel = viewModelFactory.create(MainViewModel::class.java)
         binding.tilSearchWord.setEndIconOnClickListener{
             hideKeyBoard()
 
@@ -70,17 +58,13 @@ class MainActivity : AppCompatActivity(), ViewInterface {
                     })
             }
         }
-        viewModel.setInteractor(interactor)
+        val recyclerView = binding.rvMainDictionary
+        recyclerView.layoutManager = LinearLayoutManager(application)
+        recyclerView.adapter = adapter
     }
 
     override fun rangeData(state: AppState) {
         when (state) {
-            is AppState.Error -> {
-                showError(state.error.message.toString(), true, isOnline = true)
-            }
-            is AppState.Loading -> {
-                binding.pbSearch.isVisible = state.progress == null
-            }
             is AppState.Success -> {
                 val receivedData = state.data
                 if (!receivedData.isNullOrEmpty()) {
@@ -90,6 +74,12 @@ class MainActivity : AppCompatActivity(), ViewInterface {
                         resources.getString(R.string.empty_server_response_on_success), true, isOnline = false
                     )
                 }
+            }
+            is AppState.Loading -> {
+                binding.pbSearch.isVisible = state.progress == null
+            }
+            is AppState.Error -> {
+                showError(state.error.message.toString(), true, isOnline = true)
             }
         }
     }

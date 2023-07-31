@@ -1,6 +1,7 @@
 package com.geekbrains.mydictionary.mvvm.view
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,6 +34,7 @@ class MainRvAdapter(val onClick: MainActivity.OnClickWord)
     fun setDataInRv(data: List<Word>) {
         listData.clear()
         listData.addAll(data)
+        Log.d("GbDictionary", "Works: ${data.size}")
         notifyDataSetChanged()
     }
 

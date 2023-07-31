@@ -3,6 +3,7 @@ package com.geekbrains.mydictionary.mvvm.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+
 import com.geekbrains.mydictionary.mvvm.model.entities.AppState
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 
@@ -17,6 +18,4 @@ abstract class BaseViewModel<T : AppState> (
         compositeDisposable.clear()
         super.onCleared()
     }
-
-    abstract fun setInteractor(interactor: InteractorInterface<T>)
 }
