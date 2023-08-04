@@ -1,7 +1,8 @@
 package com.geekbrains.mydictionary.mvvm.viewmodel
 
-import io.reactivex.rxjava3.core.Observable
+import com.geekbrains.mydictionary.mvvm.model.entities.Word
 
 interface InteractorInterface<T : Any> {
-    fun getDataInteractor(word: String, fromRemoteSource: Boolean): Observable<T>
+    suspend fun getDataInteractor(word: String, fromRemoteSource: Boolean): List<Word>
+    suspend fun setDataLocal(words: List<Word>)
 }
