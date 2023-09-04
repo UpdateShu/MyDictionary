@@ -2,40 +2,54 @@ package com.geekbrains.mydictionary.mvvm.viewmodel
 
 import androidx.lifecycle.LiveData
 import com.geekbrains.mydictionary.mvvm.model.entities.AppState
+import com.geekbrains.mydictionary.utils.AppDispatcher
+import com.geekbrains.mydictionary.utils.BODY_EMPTY
 
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.kotlin.subscribeBy
-import io.reactivex.rxjava3.schedulers.Schedulers
-import javax.inject.Inject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class MainViewModel @Inject constructor(private val interactor: MainInteractor)
-    : BaseViewModel<AppState>()
+class MainViewModel constructor(
+    private val interactor: MainInteractor,
+    private val scope: CoroutineScope,
+    private val dispatcher: AppDispatcher) : BaseViewModel<AppState>()
 {
+    private var job: Job? = null
+
     override fun getDataViewModel(word: String, isOnline: Boolean): LiveData<AppState> {
-        compositeDisposable.add(
-            interactor.getDataInteractor(word, isOnline)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe {
-                    liveData.postValue(AppState.Loading(null))
-                }
-                .subscribeBy(
-                    onNext = { state ->
-                        liveData.postValue(state)
-                    },
-                    onError = { error ->
-                        liveData.postValue(AppState.Error(error))
-                    },
-                    onComplete = {
-                        liveData.postValue(AppState.Loading(1))
+        liveData.postValue(AppState.Loading(null))
+        if (job?.isActive == true) {
+            job?.cancel()
+        }
+        job = scope.launch() {
+            try {
+                withContext(dispatcher.io) {
+                    interactor.getDataInteractor(word, isOnline).let { result ->
+                        withContext(dispatcher.main) {
+                            liveData.postValue(AppState.Loading(1))
+                        }
+                        if (!result.isNullOrEmpty()) {
+                            withContext(dispatcher.io) {
+                                liveData.postValue(AppState.Success(result))
+                                interactor.setDataLocal(result)
+                            }
+                        } else if (result.isEmpty()) {
+                            liveData.postValue(AppState.Error(BODY_EMPTY))
+                        }
                     }
-                )
-        )
+                }
+            } catch (e: Exception) {
+                liveData.postValue(AppState.Error(e.message.toString()))
+                liveData.postValue(AppState.Loading(e.message?.length))
+            }
+        }
         return super.getDataViewModel(word, isOnline)
     }
 
     override fun onCleared() {
-        compositeDisposable.dispose()
+        scope.cancel()
         super.onCleared()
     }
 }
