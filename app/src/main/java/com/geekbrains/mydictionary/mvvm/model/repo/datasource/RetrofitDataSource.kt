@@ -1,8 +1,8 @@
 package com.geekbrains.mydictionary.mvvm.model.repo.datasource
 
-import com.geekbrains.mydictionary.mvvm.model.api.DictionaryApi
 import com.geekbrains.mydictionary.mvvm.model.entities.SearchDTOItem
 import com.geekbrains.mydictionary.mvvm.model.entities.Word
+import com.geekbrains.mydictionary.mvvm.model.repo.datasource.retrofit.DictionaryApi
 
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory

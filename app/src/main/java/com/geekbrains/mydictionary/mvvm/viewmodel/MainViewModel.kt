@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MainViewModel constructor(
-    private val interactor: MainInteractor,
+    private val interactor: InteractorInterface<AppState>,
     private val scope: CoroutineScope,
     private val dispatcher: AppDispatcher) : BaseViewModel<AppState>()
 {
