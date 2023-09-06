@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/llContainerItem"
     android:layout_width="match_parent"
@@ -7,25 +8,55 @@
     android:layout_marginTop="@dimen/margin_medium"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tvHeaderItem"
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ivImageWord"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_image_24" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_margin="@dimen/_4dp"
+        android:id="@+id/ivFavorite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_baseline_favorite_border_24"
+        app:layout_constraintEnd_toEndOf="@id/ivImageWord"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/tvHeaderItem"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_medium"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/ivImageWord"
+        app:layout_constraintTop_toTopOf="@id/ivImageWord"
+        app:layout_constraintVertical_weight="1"
         tools:text="Header" />
 
     <TextView
         android:id="@+id/tvDescriptionItem"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginStart="@dimen/margin_medium"
-        tools:text="Description: Lorem ipsum dolor sit amet, consectetur
-adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
-aliqua." />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/ivImageWord"
+        app:layout_constraintTop_toBottomOf="@+id/tvHeaderItem"
+        app:layout_constraintVertical_weight="2"
+        tools:text="Description: " />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/hairline"
         android:layout_marginTop="@dimen/margin_small"
-        android:background="@color/color_gray" />
-</LinearLayout>
+        android:background="@color/color_gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

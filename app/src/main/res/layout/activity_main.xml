@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:id="@+id/llContainer">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilSearchWord"
@@ -19,7 +21,7 @@
             android:hint="@string/description_search"
             app:counterMaxLength="20"
             app:endIconContentDescription="@string/description_search"
-            app:endIconDrawable="@drawable/baseline_search_24"
+            app:endIconDrawable="@drawable/ic_baseline_search_24"
             app:endIconMode="custom">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -35,6 +37,20 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </LinearLayout>
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fcvContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabFavorite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="@dimen/_16dp"
+        android:layout_marginBottom="@dimen/_16dp"
+        android:src="@drawable/ic_baseline_favorite_border_24" />
 
     <ProgressBar
         android:id="@+id/pbSearch"

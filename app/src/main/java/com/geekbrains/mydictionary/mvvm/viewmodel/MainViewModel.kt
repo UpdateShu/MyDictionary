@@ -2,6 +2,7 @@ package com.geekbrains.mydictionary.mvvm.viewmodel
 
 import androidx.lifecycle.LiveData
 import com.geekbrains.mydictionary.mvvm.model.entities.AppState
+import com.geekbrains.mydictionary.mvvm.model.entities.Word
 import com.geekbrains.mydictionary.utils.AppDispatcher
 import com.geekbrains.mydictionary.utils.BODY_EMPTY
 
@@ -17,6 +18,7 @@ class MainViewModel constructor(
     private val dispatcher: AppDispatcher) : BaseViewModel<AppState>()
 {
     private var job: Job? = null
+    private var jobSetRoom: Job? = null
 
     override fun getDataViewModel(word: String, isOnline: Boolean): LiveData<AppState> {
         liveData.postValue(AppState.Loading(null))
@@ -46,6 +48,15 @@ class MainViewModel constructor(
             }
         }
         return super.getDataViewModel(word, isOnline)
+    }
+
+    fun setFavorite(word: Word) {
+        jobSetRoom = scope
+            .launch {
+                withContext(dispatcher.io) {
+                    interactor.setDataFavorite(word)
+                }
+            }
     }
 
     override fun onCleared() {
