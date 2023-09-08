@@ -1,0 +1,55 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+}
+
+android {
+    namespace 'com.geekbrains.repo'
+
+    compileSdkVersion Config.compile_sdk
+    defaultConfig {
+        minSdkVersion Config.min_sdk
+        targetSdkVersion Config.target_sdk
+        versionCode Releases.version_code
+        versionName Releases.version_name
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
+                    'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility Config.java_version
+        targetCompatibility Config.java_version
+    }
+}
+
+dependencies {
+
+    implementation project(Modules.entities)
+    implementation project(Modules.utils)
+
+    implementation Kotlin.core
+    implementation Design.appcompat
+    implementation Design.material
+
+    //Test
+    testImplementation TestImpl.junit
+    androidTestImplementation TestImpl.extjUnit
+    androidTestImplementation TestImpl.espresso
+
+    //Retrofit
+    implementation Retrofit.converter_gson
+    implementation Retrofit.retrofit
+    implementation Retrofit.adapter_coroutines
+    implementation Retrofit.logging_interceptor
+
+    //Room
+    implementation Room.runtime
+    implementation Room.room_ktx
+    kapt Room.compiler
+}

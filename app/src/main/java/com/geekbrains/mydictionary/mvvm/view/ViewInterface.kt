@@ -1,7 +1,7 @@
 package com.geekbrains.mydictionary.mvvm.view
 
-import com.geekbrains.mydictionary.mvvm.model.entities.AppState
+import com.geekbrains.entities.AppState
 
 interface ViewInterface {
-    fun rangeData(state: AppState)
+    fun rangeData(state: com.geekbrains.entities.AppState)
 }

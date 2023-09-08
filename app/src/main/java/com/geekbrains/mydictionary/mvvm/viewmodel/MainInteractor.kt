@@ -1,20 +1,19 @@
 package com.geekbrains.mydictionary.mvvm.viewmodel
 
-import com.geekbrains.mydictionary.mvvm.model.entities.AppState
-import com.geekbrains.mydictionary.mvvm.model.entities.Word
-import com.geekbrains.mydictionary.mvvm.model.repo.FavoriteRepositoryInterface
-import com.geekbrains.mydictionary.mvvm.model.repo.RepositoryInterface
+import com.geekbrains.entities.Word
+import com.geekbrains.repo.FavoriteRepositoryInterface
+import com.geekbrains.repo.RepositoryInterface
 
 class MainInteractor (
-    private val remoteRepository: RepositoryInterface<List<Word>>,
-    private val localRepository: RepositoryInterface<List<Word>>,
-    private val favoriteRepository: FavoriteRepositoryInterface<List<Word>>
+    private val remoteRepository: com.geekbrains.repo.RepositoryInterface<List<Word>>,
+    private val localRepository: com.geekbrains.repo.RepositoryInterface<List<Word>>,
+    private val favoriteRepository: com.geekbrains.repo.FavoriteRepositoryInterface<List<Word>>
 )
-    : InteractorInterface<AppState> {
+    : InteractorInterface<com.geekbrains.entities.AppState> {
 
     override suspend fun getDataInteractor(
         word: String, fromRemoteSource: Boolean)
-        : List<Word>
+        : List<com.geekbrains.entities.Word>
     {
         return if (fromRemoteSource) {
             remoteRepository.getDataRepository(word)
@@ -23,11 +22,11 @@ class MainInteractor (
         }
     }
 
-    override suspend fun setDataLocal(words: List<Word>) {
+    override suspend fun setDataLocal(words: List<com.geekbrains.entities.Word>) {
         localRepository.setDataLocal(words)
     }
 
-    override suspend fun setDataFavorite(word: Word) {
+    override suspend fun setDataFavorite(word: com.geekbrains.entities.Word) {
         favoriteRepository.setFavoriteData(listOf(word))
     }
 }

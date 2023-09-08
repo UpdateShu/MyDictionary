@@ -1,0 +1,39 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'com.geekbrains.utils'
+
+    compileSdkVersion Config.compile_sdk
+    defaultConfig {
+        minSdkVersion Config.min_sdk
+        targetSdkVersion Config.target_sdk
+        versionCode Releases.version_code
+        versionName Releases.version_name
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
+                    'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility Config.java_version
+        targetCompatibility Config.java_version
+    }
+}
+
+dependencies {
+    implementation Kotlin.core
+    implementation Design.appcompat
+    implementation Design.material
+
+    //Test
+    testImplementation TestImpl.junit
+    androidTestImplementation TestImpl.extjUnit
+    androidTestImplementation TestImpl.espresso
+}

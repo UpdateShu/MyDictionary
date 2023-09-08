@@ -11,22 +11,22 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.geekbrains.mydictionary.R
 import com.geekbrains.mydictionary.databinding.ActivityMainRvItemBinding
-import com.geekbrains.mydictionary.mvvm.model.entities.Word
+import com.geekbrains.entities.Word
 
 class FavoriteAdapter(private val onClickWord: FavoriteFragment.OnClickWord)
     : RecyclerView.Adapter<FavoriteAdapter.FavoriteViewHolder>()
 {
-    private val list: MutableList<Word> = mutableListOf()
+    private val list: MutableList<com.geekbrains.entities.Word> = mutableListOf()
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setData(data: List<Word>) {
+    fun setData(data: List<com.geekbrains.entities.Word>) {
         list.clear()
         list.addAll(data)
         notifyDataSetChanged()
     }
 
     inner class FavoriteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(word: Word)
+        fun bind(word: com.geekbrains.entities.Word)
         {
             ActivityMainRvItemBinding.bind(itemView).apply {
                 tvHeaderItem.text = word.word

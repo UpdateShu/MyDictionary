@@ -1,23 +1,11 @@
 package com.geekbrains.mydictionary.di
 
 import androidx.room.Room
-import com.geekbrains.mydictionary.mvvm.model.entities.AppState
-import com.geekbrains.mydictionary.mvvm.model.repo.Repository
-import com.geekbrains.mydictionary.mvvm.model.repo.RepositoryInterface
-import com.geekbrains.mydictionary.mvvm.model.repo.datasource.room.RoomDataSource
+import com.geekbrains.entities.AppState
 
-import com.geekbrains.mydictionary.mvvm.model.entities.Word
-import com.geekbrains.mydictionary.mvvm.model.entities.room.WordDB
-import com.geekbrains.mydictionary.mvvm.model.entities.room.WordDao
-
-import com.geekbrains.mydictionary.mvvm.model.repo.FavoriteRepository
-import com.geekbrains.mydictionary.mvvm.model.repo.FavoriteRepositoryInterface
-import com.geekbrains.mydictionary.mvvm.model.repo.datasource.DataSourceInterface
-import com.geekbrains.mydictionary.mvvm.model.repo.datasource.FavoriteDataSource
-import com.geekbrains.mydictionary.mvvm.model.repo.datasource.LocalDataSource
-import com.geekbrains.mydictionary.mvvm.model.repo.datasource.RemoteDataSource
-import com.geekbrains.mydictionary.mvvm.model.repo.datasource.retrofit.RetrofitDataSource
-import com.geekbrains.mydictionary.mvvm.model.repo.datasource.room.RoomFavoriteDataSource
+import com.geekbrains.entities.Word
+import com.geekbrains.entities.room.WordDB
+import com.geekbrains.entities.room.WordDao
 
 import com.geekbrains.mydictionary.mvvm.viewmodel.FavoriteInteractor
 import com.geekbrains.mydictionary.mvvm.viewmodel.FavoriteInteractorInterface
@@ -26,9 +14,7 @@ import com.geekbrains.mydictionary.mvvm.viewmodel.InteractorInterface
 import com.geekbrains.mydictionary.mvvm.viewmodel.MainInteractor
 import com.geekbrains.mydictionary.mvvm.viewmodel.MainViewModel
 
-import com.geekbrains.mydictionary.utils.AppDispatcher
-import com.geekbrains.mydictionary.utils.FAVORITE_VIEWMODEL
-import com.geekbrains.mydictionary.utils.MAIN_VIEWMODEL
+import com.geekbrains.utils.AppDispatcher
 
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
@@ -54,7 +40,7 @@ val appModel = module {
 
     factory<AppDispatcher> { AppDispatcher() }
     factory<CoroutineScope> { CoroutineScope(get<AppDispatcher>().default) }
-    viewModel(named(MAIN_VIEWMODEL))
+    viewModel(named(com.geekbrains.utils.MAIN_VIEWMODEL))
     {
         MainViewModel(
             interactor = get(),
@@ -62,7 +48,7 @@ val appModel = module {
             dispatcher = get()
         )
     }
-    viewModel(named(FAVORITE_VIEWMODEL))
+    viewModel(named(com.geekbrains.utils.FAVORITE_VIEWMODEL))
     {
         FavoriteViewModel(
             interactor = get(),
@@ -70,25 +56,39 @@ val appModel = module {
         )
     }
 
-    single<RepositoryInterface<List<Word>>>(named(REMOTE_REPOS)) {
-        Repository(dataSource = get(named(REMOTE_DS))) }
-    single<RepositoryInterface<List<Word>>>(named(LOCAL_REPOS)) {
-        Repository(dataSource = get(named(LOCAL_DS))) }
-    single<FavoriteRepositoryInterface<List<Word>>>(named(FAVORITE_REPOS)) {
-        FavoriteRepository(dataSource = get(named(FAVORITE_DS)))
+    single<com.geekbrains.repo.RepositoryInterface<List<Word>>>(named(REMOTE_REPOS)) {
+        com.geekbrains.repo.Repository(dataSource = get(named(REMOTE_DS)))
+    }
+    single<com.geekbrains.repo.RepositoryInterface<List<Word>>>(named(LOCAL_REPOS)) {
+        com.geekbrains.repo.Repository(dataSource = get(named(LOCAL_DS)))
+    }
+    single<com.geekbrains.repo.FavoriteRepositoryInterface<List<Word>>>(named(FAVORITE_REPOS)) {
+        com.geekbrains.repo.FavoriteRepository(dataSource = get(named(FAVORITE_DS)))
     }
 
-    single<DataSourceInterface<List<Word>>>(named(REMOTE_DS)) {
-        RemoteDataSource(RetrofitDataSource())
+    single<com.geekbrains.repo.datasource.DataSourceInterface<List<Word>>>(named(REMOTE_DS)) {
+        com.geekbrains.repo.datasource.RemoteDataSource(com.geekbrains.repo.datasource.retrofit.RetrofitDataSource())
     }
-    single<DataSourceInterface<List<Word>>>(named(LOCAL_DS)) {
-        LocalDataSource(RoomDataSource(dao = get()))
+    single<com.geekbrains.repo.datasource.DataSourceInterface<List<Word>>>(named(LOCAL_DS)) {
+        com.geekbrains.repo.datasource.LocalDataSource(
+            com.geekbrains.repo.datasource.room.RoomDataSource(
+                dao = get()
+            )
+        )
     }
-    single<DataSourceInterface<List<Word>>>(named(FAVORITE_DS)) {
-        FavoriteDataSource(RoomFavoriteDataSource(dao = get()))
+    single<com.geekbrains.repo.datasource.DataSourceInterface<List<Word>>>(named(FAVORITE_DS)) {
+        com.geekbrains.repo.datasource.FavoriteDataSource(
+            com.geekbrains.repo.datasource.room.RoomFavoriteDataSource(
+                dao = get()
+            )
+        )
     }
+
     single<WordDao> {
-        Room.databaseBuilder(androidContext(),
-            WordDB::class.java, DATABASE_NAME).build().getDao()
+        get<WordDB>().getDao()
+    }
+    single<WordDB> {
+        Room.databaseBuilder(androidContext(), WordDB::class.java, DATABASE_NAME).build()
     }
 }
+

@@ -1,7 +1,6 @@
 package com.geekbrains.mydictionary.mvvm.view
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,13 +12,13 @@ import com.bumptech.glide.load.resource.bitmap.FitCenter
 
 import com.geekbrains.mydictionary.R
 import com.geekbrains.mydictionary.databinding.ActivityMainRvItemBinding
-import com.geekbrains.mydictionary.mvvm.model.entities.Word
+import com.geekbrains.entities.Word
 
 class MainRvAdapter(val onClick: MainActivity.OnClickWord) :
     RecyclerView.Adapter<MainRvAdapter.MainRvViewHolder>() {
 
     inner class MainRvViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(word: Word) {
+        fun bind(word: com.geekbrains.entities.Word) {
             ActivityMainRvItemBinding.bind(itemView).apply {
                 tvHeaderItem.text = word.word
                 tvDescriptionItem.text = word.meanings.translation?.text
@@ -52,10 +51,10 @@ class MainRvAdapter(val onClick: MainActivity.OnClickWord) :
         }
     }
 
-    private val listData: MutableList<Word> = mutableListOf()
+    private val listData: MutableList<com.geekbrains.entities.Word> = mutableListOf()
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setDataInRv(data: List<Word>) {
+    fun setDataInRv(data: List<com.geekbrains.entities.Word>) {
         listData.clear()
         listData.addAll(data)
         notifyDataSetChanged()

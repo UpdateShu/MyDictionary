@@ -1,6 +1,5 @@
 package com.geekbrains.mydictionary.mvvm.view
 
-import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -11,15 +10,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.geekbrains.mydictionary.R
 import com.geekbrains.mydictionary.databinding.ActivityMainBinding
-import com.geekbrains.mydictionary.mvvm.model.entities.AppState
-import com.geekbrains.mydictionary.mvvm.model.entities.Word
+import com.geekbrains.entities.AppState
+import com.geekbrains.entities.Word
 import com.geekbrains.mydictionary.mvvm.view.favorite.FavoriteFragment
 import com.geekbrains.mydictionary.mvvm.viewmodel.MainViewModel
 
-import com.geekbrains.mydictionary.utils.MAIN_VIEWMODEL
-import com.geekbrains.mydictionary.utils.RELOAD_LOCAL
-import com.geekbrains.mydictionary.utils.RELOAD_ONLINE
-import com.geekbrains.mydictionary.utils.isOnline
+import com.geekbrains.utils.MAIN_VIEWMODEL
 
 import com.google.android.material.snackbar.Snackbar
 
@@ -28,8 +24,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity(), ViewInterface {
     interface OnClickWord {
-        fun onClickWord(word: Word)
-        fun onClickToFavorite(word: Word, favoriteState: Boolean)
+        fun onClickWord(word: com.geekbrains.entities.Word)
+        fun onClickToFavorite(word: com.geekbrains.entities.Word, favoriteState: Boolean)
     }
 
     private var flag: Boolean = false
@@ -39,11 +35,11 @@ class MainActivity : AppCompatActivity(), ViewInterface {
     private val viewModel: MainViewModel by viewModel(named(MAIN_VIEWMODEL))
 
     private val adapter = MainRvAdapter(object : OnClickWord {
-        override fun onClickWord(word: Word) {
+        override fun onClickWord(word: com.geekbrains.entities.Word) {
             showError(word.word, false)
         }
 
-        override fun onClickToFavorite(word: Word, favoriteState: Boolean) {
+        override fun onClickToFavorite(word: com.geekbrains.entities.Word, favoriteState: Boolean) {
             word.isFavorite = favoriteState
             viewModel.setFavorite(word)
         }
@@ -65,7 +61,9 @@ class MainActivity : AppCompatActivity(), ViewInterface {
 
             searchWord = binding.etSearchWord.text?.toString()
             if (!searchWord.isNullOrEmpty()) {
-                viewModel.getDataViewModel(searchWord!!, binding.root.isOnline(this@MainActivity))
+                viewModel.getDataViewModel(searchWord!!,
+                    com.geekbrains.utils.isOnline(this@MainActivity)
+                )
                     .observe(this, Observer { state ->
                         rangeData(state)
                     })
@@ -88,9 +86,9 @@ class MainActivity : AppCompatActivity(), ViewInterface {
         }
     }
 
-    override fun rangeData(state: AppState) {
+    override fun rangeData(state: com.geekbrains.entities.AppState) {
         when (state) {
-            is AppState.Success -> {
+            is com.geekbrains.entities.AppState.Success -> {
                 val receivedData = state.data
                 if (!receivedData.isNullOrEmpty()) {
                     showData(receivedData)
@@ -100,16 +98,16 @@ class MainActivity : AppCompatActivity(), ViewInterface {
                     )
                 }
             }
-            is AppState.Loading -> {
+            is com.geekbrains.entities.AppState.Loading -> {
                 binding.pbSearch.isVisible = state.progress == null
             }
-            is AppState.Error -> {
+            is com.geekbrains.entities.AppState.Error -> {
                 showError(state.error, true, isOnline = true)
             }
         }
     }
 
-    private fun showData(data: List<Word>) {
+    private fun showData(data: List<com.geekbrains.entities.Word>) {
         adapter.setDataInRv(data)
     }
 
@@ -117,7 +115,7 @@ class MainActivity : AppCompatActivity(), ViewInterface {
         val sb = Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG)
         if (isAction) {
             if (isOnline) {
-                sb.setAction(RELOAD_ONLINE) {
+                sb.setAction(com.geekbrains.utils.RELOAD_ONLINE) {
                     if (!searchWord.isNullOrEmpty()) {
                         viewModel.getDataViewModel(searchWord!!, true)
                     } else {
@@ -125,7 +123,7 @@ class MainActivity : AppCompatActivity(), ViewInterface {
                     }
                 }
             } else {
-                sb.setAction(RELOAD_LOCAL) {
+                sb.setAction(com.geekbrains.utils.RELOAD_LOCAL) {
                     if (!searchWord.isNullOrEmpty()) {
                         viewModel.getDataViewModel(searchWord!!, false)
                     } else {
@@ -138,7 +136,7 @@ class MainActivity : AppCompatActivity(), ViewInterface {
     }
     private fun hideKeyBoard() {
         this.currentFocus?.let {
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(it.windowToken, 0)
         }
     }

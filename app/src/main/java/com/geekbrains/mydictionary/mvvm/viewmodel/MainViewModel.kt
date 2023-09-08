@@ -1,10 +1,8 @@
 package com.geekbrains.mydictionary.mvvm.viewmodel
 
 import androidx.lifecycle.LiveData
-import com.geekbrains.mydictionary.mvvm.model.entities.AppState
-import com.geekbrains.mydictionary.mvvm.model.entities.Word
-import com.geekbrains.mydictionary.utils.AppDispatcher
-import com.geekbrains.mydictionary.utils.BODY_EMPTY
+import com.geekbrains.entities.AppState
+import com.geekbrains.entities.Word
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -13,15 +11,16 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MainViewModel constructor(
-    private val interactor: InteractorInterface<AppState>,
+    private val interactor: InteractorInterface<com.geekbrains.entities.AppState>,
     private val scope: CoroutineScope,
-    private val dispatcher: AppDispatcher) : BaseViewModel<AppState>()
+    private val dispatcher: com.geekbrains.utils.AppDispatcher
+) : BaseViewModel<com.geekbrains.entities.AppState>()
 {
     private var job: Job? = null
     private var jobSetRoom: Job? = null
 
-    override fun getDataViewModel(word: String, isOnline: Boolean): LiveData<AppState> {
-        liveData.postValue(AppState.Loading(null))
+    override fun getDataViewModel(word: String, isOnline: Boolean): LiveData<com.geekbrains.entities.AppState> {
+        liveData.postValue(com.geekbrains.entities.AppState.Loading(null))
         if (job?.isActive == true) {
             job?.cancel()
         }
@@ -30,27 +29,27 @@ class MainViewModel constructor(
                 withContext(dispatcher.io) {
                     interactor.getDataInteractor(word, isOnline).let { result ->
                         withContext(dispatcher.main) {
-                            liveData.postValue(AppState.Loading(1))
+                            liveData.postValue(com.geekbrains.entities.AppState.Loading(1))
                         }
                         if (!result.isNullOrEmpty()) {
                             withContext(dispatcher.io) {
-                                liveData.postValue(AppState.Success(result))
+                                liveData.postValue(com.geekbrains.entities.AppState.Success(result))
                                 interactor.setDataLocal(result)
                             }
                         } else if (result.isEmpty()) {
-                            liveData.postValue(AppState.Error(BODY_EMPTY))
+                            liveData.postValue(com.geekbrains.entities.AppState.Error(com.geekbrains.utils.BODY_EMPTY))
                         }
                     }
                 }
             } catch (e: Exception) {
-                liveData.postValue(AppState.Error(e.message.toString()))
-                liveData.postValue(AppState.Loading(e.message?.length))
+                liveData.postValue(com.geekbrains.entities.AppState.Error(e.message.toString()))
+                liveData.postValue(com.geekbrains.entities.AppState.Loading(e.message?.length))
             }
         }
         return super.getDataViewModel(word, isOnline)
     }
 
-    fun setFavorite(word: Word) {
+    fun setFavorite(word: com.geekbrains.entities.Word) {
         jobSetRoom = scope
             .launch {
                 withContext(dispatcher.io) {
