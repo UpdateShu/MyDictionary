@@ -1,8 +1,9 @@
-package com.geekbrains.mydictionary.mvvm.model.repo.datasource
+package com.geekbrains.mydictionary.mvvm.model.repo.datasource.room
 
 import com.geekbrains.mydictionary.mvvm.model.entities.Word
 import com.geekbrains.mydictionary.mvvm.model.entities.room.WordDao
 import com.geekbrains.mydictionary.mvvm.model.entities.room.WordEntity
+import com.geekbrains.mydictionary.mvvm.model.repo.datasource.DataSourceInterface
 
 class RoomDataSource(private val dao: WordDao)
     : DataSourceInterface<List<Word>>
@@ -21,7 +22,8 @@ class RoomDataSource(private val dao: WordDao)
         return result
     }
 
-    private fun convertMeanings(meanings: WordEntity.Meaning): Word.Meanings {
+    private fun convertMeanings(meanings: WordEntity.Meaning): Word.Meanings
+    {
         val result: MutableList<Word.Meanings> = mutableListOf()
         return Word.Meanings(
             imageUrl = "https:" + meanings.imageUrl,
@@ -29,11 +31,11 @@ class RoomDataSource(private val dao: WordDao)
         )
     }
 
-    private fun convertTranslation(translation: WordEntity.Meaning.Translation): Word.Meanings.Translation? {
-        return Word.Meanings.Translation(translation.translationText)
-    }
+    private fun convertTranslation(translation: WordEntity.Meaning.Translation)
+        = Word.Meanings.Translation(translation.translationText)
 
-    override suspend fun setDataLocal(words: List<Word>) {
+    override suspend fun setDataLocal(words: List<Word>)
+    {
         words.forEach {
             val wordCash = WordEntity(
                 wId = it.id,
@@ -44,13 +46,11 @@ class RoomDataSource(private val dao: WordDao)
         }
     }
 
-    private fun convertMeamings(meanings: Word.Meanings): WordEntity.Meaning {
-        return WordEntity.Meaning(
+    private fun convertMeamings(meanings: Word.Meanings)
+        = WordEntity.Meaning(
             mId = 0,
             imageUrl = meanings.imageUrl,
-            translation = WordEntity.Meaning.Translation(meanings.translation?.text)
-        )
-    }
+            translation = WordEntity.Meaning.Translation(meanings.translation?.text))
 
     override suspend fun getData(): List<Word> {
         val list = dao.getAllWord()

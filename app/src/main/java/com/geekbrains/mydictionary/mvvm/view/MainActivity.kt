@@ -3,6 +3,7 @@ package com.geekbrains.mydictionary.mvvm.view
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
@@ -12,6 +13,7 @@ import com.geekbrains.mydictionary.R
 import com.geekbrains.mydictionary.databinding.ActivityMainBinding
 import com.geekbrains.mydictionary.mvvm.model.entities.AppState
 import com.geekbrains.mydictionary.mvvm.model.entities.Word
+import com.geekbrains.mydictionary.mvvm.view.favorite.FavoriteFragment
 import com.geekbrains.mydictionary.mvvm.viewmodel.MainViewModel
 
 import com.geekbrains.mydictionary.utils.MAIN_VIEWMODEL
@@ -27,8 +29,10 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class MainActivity : AppCompatActivity(), ViewInterface {
     interface OnClickWord {
         fun onClickWord(word: Word)
+        fun onClickToFavorite(word: Word, favoriteState: Boolean)
     }
 
+    private var flag: Boolean = false
     private var searchWord: String? = null
     private lateinit var binding: ActivityMainBinding
 
@@ -37,6 +41,11 @@ class MainActivity : AppCompatActivity(), ViewInterface {
     private val adapter = MainRvAdapter(object : OnClickWord {
         override fun onClickWord(word: Word) {
             showError(word.word, false)
+        }
+
+        override fun onClickToFavorite(word: Word, favoriteState: Boolean) {
+            word.isFavorite = favoriteState
+            viewModel.setFavorite(word)
         }
     })
 
@@ -60,6 +69,21 @@ class MainActivity : AppCompatActivity(), ViewInterface {
                     .observe(this, Observer { state ->
                         rangeData(state)
                     })
+            }
+        }
+        binding.fabFavorite.setOnClickListener {
+            flag = !flag
+            if (flag) {
+                binding.llContainer.visibility = View.GONE
+                binding.fcvContainer.visibility = View.VISIBLE
+                binding.fabFavorite.setImageResource(R.drawable.ic_baseline_favorite_24)
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.fcvContainer, FavoriteFragment.newInstance())
+                    .commit()
+            } else {
+                binding.llContainer.visibility = View.VISIBLE
+                binding.fcvContainer.visibility = View.GONE
+                binding.fabFavorite.setImageResource(R.drawable.ic_baseline_favorite_border_24)
             }
         }
     }

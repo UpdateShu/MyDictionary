@@ -12,7 +12,8 @@ abstract class BaseViewModel<T : AppState> (
     protected val compositeDisposable: CompositeDisposable = CompositeDisposable())
         : ViewModel()
 {
-    open fun getDataViewModel(word: String, isOnline: Boolean): LiveData<T> = liveData
+    open fun getDataViewModel(word: String = "", isOnline: Boolean = true)
+        : LiveData<T> = liveData
 
     override fun onCleared() {
         compositeDisposable.clear()
