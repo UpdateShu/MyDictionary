@@ -7,13 +7,6 @@ import com.geekbrains.entities.Word
 import com.geekbrains.entities.room.WordDB
 import com.geekbrains.entities.room.WordDao
 
-import com.geekbrains.mydictionary.mvvm.viewmodel.FavoriteInteractor
-import com.geekbrains.mydictionary.mvvm.viewmodel.FavoriteInteractorInterface
-import com.geekbrains.mydictionary.mvvm.viewmodel.FavoriteViewModel
-import com.geekbrains.mydictionary.mvvm.viewmodel.InteractorInterface
-import com.geekbrains.mydictionary.mvvm.viewmodel.MainInteractor
-import com.geekbrains.mydictionary.mvvm.viewmodel.MainViewModel
-
 import com.geekbrains.utils.AppDispatcher
 
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -26,23 +19,23 @@ import org.koin.dsl.module
 
 val appModel = module {
     single<CompositeDisposable> { CompositeDisposable() }
-    single<InteractorInterface<AppState>> {
-        MainInteractor(
+    single<com.geekbrains.viewmodel.InteractorInterface<AppState>> {
+        com.geekbrains.viewmodel.MainInteractor(
             remoteRepository = get(named(REMOTE_REPOS)),
             localRepository = get(named(LOCAL_REPOS)),
             favoriteRepository = get(named(FAVORITE_REPOS))
         )
     }
-    single<FavoriteInteractorInterface<AppState>>
+    single<com.geekbrains.viewmodel.FavoriteInteractorInterface<AppState>>
     {
-        FavoriteInteractor(favoriteRepository = get(named(FAVORITE_REPOS)))
+        com.geekbrains.viewmodel.FavoriteInteractor(favoriteRepository = get(named(FAVORITE_REPOS)))
     }
 
     factory<AppDispatcher> { AppDispatcher() }
     factory<CoroutineScope> { CoroutineScope(get<AppDispatcher>().default) }
     viewModel(named(com.geekbrains.utils.MAIN_VIEWMODEL))
     {
-        MainViewModel(
+        com.geekbrains.viewmodel.MainViewModel(
             interactor = get(),
             scope = get(),
             dispatcher = get()
@@ -50,7 +43,7 @@ val appModel = module {
     }
     viewModel(named(com.geekbrains.utils.FAVORITE_VIEWMODEL))
     {
-        FavoriteViewModel(
+        com.geekbrains.viewmodel.FavoriteViewModel(
             interactor = get(),
             dispatcher = get()
         )

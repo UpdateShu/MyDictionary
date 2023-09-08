@@ -1,10 +1,10 @@
-package com.geekbrains.mydictionary.mvvm.viewmodel
+package com.geekbrains.viewmodel
 
+import com.geekbrains.entities.AppState
 import com.geekbrains.entities.Word
-import com.geekbrains.repo.FavoriteRepositoryInterface
 
 class FavoriteInteractor(private val favoriteRepository: com.geekbrains.repo.FavoriteRepositoryInterface<List<Word>>)
-    : FavoriteInteractorInterface<com.geekbrains.entities.AppState>
+    : FavoriteInteractorInterface<AppState>
 {
     override suspend fun getAllFavorite(): List<com.geekbrains.entities.Word> {
         return favoriteRepository.getAllFavorite()

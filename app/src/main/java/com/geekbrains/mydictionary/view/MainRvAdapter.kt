@@ -1,4 +1,4 @@
-package com.geekbrains.mydictionary.mvvm.view
+package com.geekbrains.mydictionary.view
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -12,7 +12,6 @@ import com.bumptech.glide.load.resource.bitmap.FitCenter
 
 import com.geekbrains.mydictionary.R
 import com.geekbrains.mydictionary.databinding.ActivityMainRvItemBinding
-import com.geekbrains.entities.Word
 
 class MainRvAdapter(val onClick: MainActivity.OnClickWord) :
     RecyclerView.Adapter<MainRvAdapter.MainRvViewHolder>() {

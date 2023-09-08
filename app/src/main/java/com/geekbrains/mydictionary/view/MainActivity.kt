@@ -1,4 +1,4 @@
-package com.geekbrains.mydictionary.mvvm.view
+package com.geekbrains.mydictionary.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -7,13 +7,11 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.geekbrains.entities.Word
 
 import com.geekbrains.mydictionary.R
 import com.geekbrains.mydictionary.databinding.ActivityMainBinding
-import com.geekbrains.entities.AppState
-import com.geekbrains.entities.Word
-import com.geekbrains.mydictionary.mvvm.view.favorite.FavoriteFragment
-import com.geekbrains.mydictionary.mvvm.viewmodel.MainViewModel
+import com.geekbrains.mydictionary.view.favorite.FavoriteFragment
 
 import com.geekbrains.utils.MAIN_VIEWMODEL
 
@@ -32,14 +30,14 @@ class MainActivity : AppCompatActivity(), ViewInterface {
     private var searchWord: String? = null
     private lateinit var binding: ActivityMainBinding
 
-    private val viewModel: MainViewModel by viewModel(named(MAIN_VIEWMODEL))
+    private val viewModel: com.geekbrains.viewmodel.MainViewModel by viewModel(named(MAIN_VIEWMODEL))
 
     private val adapter = MainRvAdapter(object : OnClickWord {
-        override fun onClickWord(word: com.geekbrains.entities.Word) {
+        override fun onClickWord(word: Word) {
             showError(word.word, false)
         }
 
-        override fun onClickToFavorite(word: com.geekbrains.entities.Word, favoriteState: Boolean) {
+        override fun onClickToFavorite(word: Word, favoriteState: Boolean) {
             word.isFavorite = favoriteState
             viewModel.setFavorite(word)
         }

@@ -6,27 +6,26 @@ plugins {
 
 android {
     namespace 'com.geekbrains.mydictionary'
-    compileSdk 33
+    compileSdkVersion Config.compile_sdk
 
     defaultConfig {
-        applicationId "com.geekbrains.mydictionary"
-        minSdk 29
-        targetSdk 33
-        versionCode 1
-        versionName "1.0"
-
+        applicationId 'com.geekbrains.mydictionary'
+        minSdkVersion Config.min_sdk
+        targetSdkVersion Config.target_sdk
+        versionCode Releases.version_code
+        versionName Releases.version_name
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
+                    'proguard-rules.pro'
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility Config.java_version
+        targetCompatibility Config.java_version
     }
     kotlinOptions {
         jvmTarget = '17'
@@ -40,49 +39,36 @@ android {
 dependencies {
 
     //Design
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.5.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation Kotlin.core
+    implementation Design.appcompat
 
-    //Kotlin
-    implementation 'androidx.core:core-ktx:1.8.0'
+    implementation Design.appcompat
+    implementation Design.material
+    implementation Design.constraintlayout
 
-    //Retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.squareup.retrofit2:adapter-rxjava3:2.9.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11'
-
-    implementation project(path: ':utils')
-    implementation project(path: ':entities')
-    implementation project(path: ':repo')
+    implementation project(Modules.utils)
+    implementation project(Modules.entities)
+    implementation project(Modules.repo)
+    implementation project(Modules.viewmodel)
 
     //Koin for Android
-    //Current version
-    def koin_version= "3.1.6"
-    //Koin core features
-    implementation "io.insert-koin:koin-core:$koin_version"
-    //Koin main features for Android (Scope,ViewModel ...)
-    implementation "io.insert-koin:koin-android:$koin_version"
-    //Koin Java Compatibility
-    implementation "io.insert-koin:koin-android-compat:$koin_version"
+    implementation Koin.koin_android
+    implementation Koin.koin_view_model
+    implementation Koin.koin_java_compat
 
     //Download images
-    //Picasso
-    implementation 'com.squareup.picasso:picasso:2.71828'
-    //Glide
-    implementation 'com.github.bumptech.glide:glide:4.13.0'
-    kapt 'com.github.bumptech.glide:compiler:4.13.0'
-    //Coil
-    implementation 'io.coil-kt:coil:0.11.0'
+    implementation Glide.glide
+    kapt Glide.glideCompiler
 
     //Room
-    implementation 'androidx.room:room-runtime:2.5.2'
-    kapt 'androidx.room:room-compiler:2.5.2'
-    implementation 'androidx.room:room-ktx:2.5.2'
+    implementation Room.runtime
+    implementation Room.room_ktx
+    kapt Room.compiler
+
+    implementation Retrofit.adapter_rxjava
 
     //Test
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    testImplementation TestImpl.junit
+    androidTestImplementation TestImpl.extjUnit
+    androidTestImplementation TestImpl.espresso
 }

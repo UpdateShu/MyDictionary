@@ -18,6 +18,7 @@ object Modules {
     const val utils = ":utils"
     const val entities = ":entities"
     const val repo = ":repo"
+    const val viewmodel = ":viewmodel"
 }
 
 object Versions {
@@ -30,9 +31,12 @@ object Versions {
     //Kotlin
     const val core = "1.8.0"
 
+    const val io_rx = "3.0.0"
+
     //Retrofit
     const val retrofit = "2.9.0"
     const val converterGson = "2.9.0"
+    const val adapter_rxjava = "2.9.0"
     const val interceptor = "3.12.1"
     const val adapterCoroutines = "0.9.2"
 
@@ -70,9 +74,14 @@ object Kotlin {
     const val core = "androidx.core:core-ktx:${Versions.core}"
 }
 
+object IO {
+    const val io_rx_java = "io.reactivex.rxjava3:rxjava:3.0.0:${Versions.io_rx}"
+}
+
 object Retrofit {
     const val retrofit = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
     const val converter_gson = "com.squareup.retrofit2:converter-gson:${Versions.converterGson}"
+    const val adapter_rxjava = "com.squareup.retrofit2:adapter-rxjava3:${Versions.adapter_rxjava}"
     const val adapter_coroutines =
         "com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:${Versions.adapterCoroutines}"
     const val logging_interceptor =

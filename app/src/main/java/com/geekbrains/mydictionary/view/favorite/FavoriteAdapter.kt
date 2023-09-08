@@ -1,4 +1,4 @@
-package com.geekbrains.mydictionary.mvvm.view.favorite
+package com.geekbrains.mydictionary.view.favorite
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -11,7 +11,6 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.geekbrains.mydictionary.R
 import com.geekbrains.mydictionary.databinding.ActivityMainRvItemBinding
-import com.geekbrains.entities.Word
 
 class FavoriteAdapter(private val onClickWord: FavoriteFragment.OnClickWord)
     : RecyclerView.Adapter<FavoriteAdapter.FavoriteViewHolder>()

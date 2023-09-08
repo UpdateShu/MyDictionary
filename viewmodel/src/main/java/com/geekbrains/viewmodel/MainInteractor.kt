@@ -1,15 +1,14 @@
-package com.geekbrains.mydictionary.mvvm.viewmodel
+package com.geekbrains.viewmodel
 
+import com.geekbrains.entities.AppState
 import com.geekbrains.entities.Word
-import com.geekbrains.repo.FavoriteRepositoryInterface
-import com.geekbrains.repo.RepositoryInterface
 
 class MainInteractor (
     private val remoteRepository: com.geekbrains.repo.RepositoryInterface<List<Word>>,
     private val localRepository: com.geekbrains.repo.RepositoryInterface<List<Word>>,
     private val favoriteRepository: com.geekbrains.repo.FavoriteRepositoryInterface<List<Word>>
 )
-    : InteractorInterface<com.geekbrains.entities.AppState> {
+    : InteractorInterface<AppState> {
 
     override suspend fun getDataInteractor(
         word: String, fromRemoteSource: Boolean)

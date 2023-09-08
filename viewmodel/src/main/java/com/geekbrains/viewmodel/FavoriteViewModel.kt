@@ -1,4 +1,4 @@
-package com.geekbrains.mydictionary.mvvm.viewmodel
+package com.geekbrains.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.geekbrains.entities.AppState
@@ -6,10 +6,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class FavoriteViewModel(
-    private val interactor: FavoriteInteractorInterface<com.geekbrains.entities.AppState>,
+    private val interactor: FavoriteInteractorInterface<AppState>,
     private val dispatcher: com.geekbrains.utils.AppDispatcher
 )
-    : BaseViewModel<com.geekbrains.entities.AppState>()
+    : com.geekbrains.viewmodel.BaseViewModel<AppState>()
 {
     fun getFavoritesList() {
         liveData.postValue(com.geekbrains.entities.AppState.Loading(null))

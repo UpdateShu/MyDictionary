@@ -1,4 +1,4 @@
-package com.geekbrains.mydictionary.mvvm.viewmodel
+package com.geekbrains.viewmodel
 
 import com.geekbrains.entities.Word
 

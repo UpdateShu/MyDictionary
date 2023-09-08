@@ -1,4 +1,4 @@
-package com.geekbrains.mydictionary.mvvm.view
+package com.geekbrains.mydictionary.view
 
 import com.geekbrains.entities.AppState
 

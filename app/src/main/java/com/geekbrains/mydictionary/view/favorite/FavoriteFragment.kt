@@ -1,4 +1,4 @@
-package com.geekbrains.mydictionary.mvvm.view.favorite
+package com.geekbrains.mydictionary.view.favorite
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -7,10 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.geekbrains.mydictionary.databinding.FragmentFavoriteBinding
-import com.geekbrains.entities.AppState
 import com.geekbrains.entities.Word
-import com.geekbrains.mydictionary.mvvm.viewmodel.FavoriteViewModel
+import com.geekbrains.mydictionary.databinding.FragmentFavoriteBinding
 import com.google.android.material.snackbar.Snackbar
 
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -30,13 +28,13 @@ class FavoriteFragment : Fragment()
     private var _binding: FragmentFavoriteBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: FavoriteViewModel by viewModel(named(com.geekbrains.utils.FAVORITE_VIEWMODEL))
+    private val viewModel: com.geekbrains.viewmodel.FavoriteViewModel by viewModel(named(com.geekbrains.utils.FAVORITE_VIEWMODEL))
     private val adapter: FavoriteAdapter = FavoriteAdapter(object : OnClickWord {
-        override fun onClickWord(word: com.geekbrains.entities.Word) {
+        override fun onClickWord(word: Word) {
             Snackbar.make(binding.root, word.word, Snackbar.LENGTH_LONG).show()
         }
 
-        override fun onClickToFavorite(word: com.geekbrains.entities.Word, favoriteState: Boolean) {
+        override fun onClickToFavorite(word: Word, favoriteState: Boolean) {
             viewModel.deleteIsFavorite(word.id.toInt())
         }
     })

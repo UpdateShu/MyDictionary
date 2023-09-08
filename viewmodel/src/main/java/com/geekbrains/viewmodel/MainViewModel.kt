@@ -1,8 +1,7 @@
-package com.geekbrains.mydictionary.mvvm.viewmodel
+package com.geekbrains.viewmodel
 
 import androidx.lifecycle.LiveData
 import com.geekbrains.entities.AppState
-import com.geekbrains.entities.Word
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -11,10 +10,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MainViewModel constructor(
-    private val interactor: InteractorInterface<com.geekbrains.entities.AppState>,
+    private val interactor: InteractorInterface<AppState>,
     private val scope: CoroutineScope,
     private val dispatcher: com.geekbrains.utils.AppDispatcher
-) : BaseViewModel<com.geekbrains.entities.AppState>()
+) : com.geekbrains.viewmodel.BaseViewModel<AppState>()
 {
     private var job: Job? = null
     private var jobSetRoom: Job? = null

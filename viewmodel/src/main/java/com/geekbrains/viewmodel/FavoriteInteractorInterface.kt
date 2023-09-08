@@ -1,6 +1,4 @@
-package com.geekbrains.mydictionary.mvvm.viewmodel
-
-import com.geekbrains.entities.Word
+package com.geekbrains.viewmodel
 
 interface FavoriteInteractorInterface<T> {
     suspend fun getAllFavorite():List<com.geekbrains.entities.Word>
