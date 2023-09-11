@@ -2,11 +2,12 @@ package com.geekbrains.viewmodel
 
 import com.geekbrains.entities.AppState
 import com.geekbrains.entities.Word
+import com.geekbrains.repo.FavoriteRepositoryInterface
 
-class FavoriteInteractor(private val favoriteRepository: com.geekbrains.repo.FavoriteRepositoryInterface<List<Word>>)
+class FavoriteInteractor(private val favoriteRepository: FavoriteRepositoryInterface<List<Word>>)
     : FavoriteInteractorInterface<AppState>
 {
-    override suspend fun getAllFavorite(): List<com.geekbrains.entities.Word> {
+    override suspend fun getAllFavorite(): List<Word> {
         return favoriteRepository.getAllFavorite()
     }
 
@@ -14,7 +15,7 @@ class FavoriteInteractor(private val favoriteRepository: com.geekbrains.repo.Fav
         favoriteRepository.deleteFavorite(idWord)
     }
 
-    override suspend fun setFavoriteData(word: com.geekbrains.entities.Word) {
+    override suspend fun setFavoriteData(word: Word) {
         TODO("Not yet implemented")
     }
 }
