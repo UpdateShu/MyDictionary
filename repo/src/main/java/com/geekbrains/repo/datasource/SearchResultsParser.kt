@@ -10,8 +10,8 @@ fun convertSearchDtoToWords(searchItems: List<SearchDTOItem>)
         searchItem.meanings?.let {
             meanings = it.map { meaningDTO ->
                 Word.Meanings(
-                    Word.Meanings.Translation(meaningDTO?.translation?.text ?: ""),
-                    meaningDTO?.imageUrl ?: ""
+                    Word.Meanings.Translation(meaningDTO.translation?.text ?: ""),
+                    "https:${meaningDTO.imageUrl}"
                 )
             }
         }
@@ -21,7 +21,8 @@ fun convertSearchDtoToWords(searchItems: List<SearchDTOItem>)
 fun convertWordEntityToWords(wordEntities: List<WordEntity>)
         = wordEntities.map { wordEntity ->
     val meaning = wordEntity.meanings?.let {
-        Word.Meanings(Word.Meanings.Translation(it.translation?.translationText ?: ""),
-            it.imageUrl ?: "") } ?: null
-    Word(wordEntity.wId.toString(), wordEntity.text ?: "", meaning)
+        Word.Meanings(Word.Meanings.Translation(it.translation.translationText ?: ""),
+            it.imageUrl?.let { url -> "https:${url}"} ?: "")
+    }
+    Word(wordEntity.wId, wordEntity.text ?: "", meaning)
 }

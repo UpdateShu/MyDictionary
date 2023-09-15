@@ -1,12 +1,13 @@
 package com.geekbrains.mydictionary.view
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+
 import com.geekbrains.entities.AppState
 import com.geekbrains.entities.Word
 
@@ -34,6 +35,8 @@ class MainActivity : ScopeActivity() {
     private var flag: Boolean = false
     private var searchWord: String? = null
     private lateinit var binding: ActivityMainBinding
+
+    private var isOnline: Boolean = true
 
     private val viewModel: MainViewModel by viewModel(named(MAIN_VIEWMODEL))
 
@@ -88,13 +91,14 @@ class MainActivity : ScopeActivity() {
             }
         }
         viewModel.initNetworkValidation(this@MainActivity)
+            .observe(this, Observer { state -> rangeData(state) })
     }
 
     fun rangeData(state: AppState) {
         when (state) {
             is AppState.Success -> {
                 val receivedData = state.data
-                if (!receivedData.isNullOrEmpty()) {
+                if (receivedData.isNotEmpty()) {
                     showData(receivedData)
                 } else {
                     showError(
@@ -107,6 +111,11 @@ class MainActivity : ScopeActivity() {
             }
             is AppState.Error -> {
                 showError(state.error, true, isOnline = true)
+            }
+            is AppState.OnlineChanged -> {
+                isOnline = state.isOnline
+                showError(if (isOnline) "Online" else "Offline", true, isOnline)
+                Log.v("MyDictionary", isOnline.toString())
             }
         }
     }
@@ -121,7 +130,7 @@ class MainActivity : ScopeActivity() {
             if (isOnline) {
                 sb.setAction(RELOAD_ONLINE) {
                     if (!searchWord.isNullOrEmpty()) {
-                        viewModel.getDataViewModel(searchWord!!, true)
+                        viewModel.getDataViewModel(searchWord!!)
                     } else {
                         showError(resources.getString(R.string.error_empty), false)
                     }
@@ -129,7 +138,7 @@ class MainActivity : ScopeActivity() {
             } else {
                 sb.setAction(RELOAD_LOCAL) {
                     if (!searchWord.isNullOrEmpty()) {
-                        viewModel.getDataViewModel(searchWord!!, false)
+                        viewModel.getDataViewModel(searchWord!!)
                     } else {
                         showError(resources.getString(R.string.error_empty), false)
                     }

@@ -1,8 +1,8 @@
 package com.geekbrains.viewmodel
 
 import com.geekbrains.entities.AppState
+import com.geekbrains.utils.BODY_EMPTY
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -17,10 +17,10 @@ class FavoriteViewModel(
             try {
                 withContext(Dispatchers.IO) {
                     val response = interactor.getAllFavorite()
-                    if (!response.isNullOrEmpty()) {
+                    if (response.isNotEmpty()) {
                         liveData.postValue(AppState.Success(response))
                     } else {
-                        liveData.postValue(AppState.Error(com.geekbrains.utils.BODY_EMPTY))
+                        liveData.postValue(AppState.Error(BODY_EMPTY))
                     }
                 }
             } catch (e: Exception) {

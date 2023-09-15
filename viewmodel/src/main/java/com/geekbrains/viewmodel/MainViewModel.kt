@@ -1,9 +1,12 @@
 package com.geekbrains.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.LiveData
+
 import com.geekbrains.entities.AppState
 import com.geekbrains.entities.Word
 import com.geekbrains.utils.BODY_EMPTY
+import com.geekbrains.utils.NetworkManager
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -17,7 +20,10 @@ class MainViewModel constructor(
     private var job: Job? = null
     private var jobSetRoom: Job? = null
 
-    override fun getDataViewModel(word: String, isOnline: Boolean): LiveData<AppState> {
+    private var networkManager: NetworkManager? = null
+    private var isOnline : Boolean = true
+
+    override fun getDataViewModel(word: String): LiveData<AppState> {
         liveData.postValue(AppState.Loading(null))
         if (job?.isActive == true) {
             job?.cancel()
@@ -44,7 +50,23 @@ class MainViewModel constructor(
                 liveData.postValue(AppState.Loading(e.message?.length))
             }
         }
-        return super.getDataViewModel(word, isOnline)
+        return super.getDataViewModel(word)
+    }
+
+    fun initNetworkValidation(context: Context) : LiveData<AppState> {
+        networkManager = NetworkManager(viewModelCoroutineScope, context)
+        networkManager?.let {
+            it.init()
+            viewModelCoroutineScope.launch {
+                it.connection.collect {
+                    if (it != isOnline) {
+                        isOnline = it
+                        liveData.postValue(AppState.OnlineChanged(isOnline))
+                    }
+                }
+            }
+        }
+        return liveData
     }
 
     fun setFavorite(word: Word)
@@ -55,6 +77,11 @@ class MainViewModel constructor(
                     interactor.setDataFavorite(word)
                 }
             }
+    }
+
+    override fun onCleared() {
+        networkManager?.clear()
+        super.onCleared()
     }
 
     override fun handleError(error: Throwable) {

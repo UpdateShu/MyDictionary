@@ -44,8 +44,7 @@ class FavoriteFragment : Fragment()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+        savedInstanceState: Bundle?): View {
         _binding = FragmentFavoriteBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -67,7 +66,7 @@ class FavoriteFragment : Fragment()
         viewModel.getFavoritesList()
     }
 
-    private fun rangeData(state: com.geekbrains.entities.AppState) {
+    private fun rangeData(state: AppState) {
         when (state) {
             is AppState.Error -> {
                 Snackbar.make(binding.root, state.error, Snackbar.LENGTH_LONG).show()
@@ -82,6 +81,8 @@ class FavoriteFragment : Fragment()
             is AppState.Success -> {
                 adapter.setData(state.data)
             }
+
+            else -> {}
         }
     }
 }
