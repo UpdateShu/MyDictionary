@@ -29,10 +29,10 @@ class FavoriteAdapter(private val onClickWord: FavoriteFragment.OnClickWord)
         {
             ActivityMainRvItemBinding.bind(itemView).apply {
                 tvHeaderItem.text = word.word
-                tvDescriptionItem.text = word.meanings.translation?.text
-                word.meanings.imageUrl?.let {
+                tvDescriptionItem.text = word.meanings?.translation?.text
+                word.meanings?.imageUrl?.let {
                     Glide.with(itemView.context)
-                        .load(word.meanings.imageUrl)
+                        .load(it)
                         .centerCrop()
                         .transform(MultiTransformation(CircleCrop(), FitCenter()))
                         .placeholder(R.drawable.ic_baseline_image_24)

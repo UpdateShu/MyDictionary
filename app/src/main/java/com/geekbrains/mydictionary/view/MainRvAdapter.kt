@@ -9,6 +9,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.load.resource.bitmap.FitCenter
+import com.geekbrains.entities.Word
 
 import com.geekbrains.mydictionary.R
 import com.geekbrains.mydictionary.databinding.ActivityMainRvItemBinding
@@ -17,13 +18,13 @@ class MainRvAdapter(val onClick: MainActivity.OnClickWord) :
     RecyclerView.Adapter<MainRvAdapter.MainRvViewHolder>() {
 
     inner class MainRvViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(word: com.geekbrains.entities.Word) {
+        fun bind(word: Word) {
             ActivityMainRvItemBinding.bind(itemView).apply {
                 tvHeaderItem.text = word.word
-                tvDescriptionItem.text = word.meanings.translation?.text
-                word.meanings.imageUrl?.let {
+                tvDescriptionItem.text = word.meanings?.translation?.text
+                word.meanings?.imageUrl?.let {
                     Glide.with(itemView.context)
-                        .load(word.meanings.imageUrl)
+                        .load(it)
                         .centerCrop()
                         .transform(MultiTransformation(CircleCrop(), FitCenter()))
                         .placeholder(R.drawable.ic_baseline_image_24)
@@ -50,10 +51,10 @@ class MainRvAdapter(val onClick: MainActivity.OnClickWord) :
         }
     }
 
-    private val listData: MutableList<com.geekbrains.entities.Word> = mutableListOf()
+    private val listData: MutableList<Word> = mutableListOf()
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setDataInRv(data: List<com.geekbrains.entities.Word>) {
+    fun setDataInRv(data: List<Word>) {
         listData.clear()
         listData.addAll(data)
         notifyDataSetChanged()

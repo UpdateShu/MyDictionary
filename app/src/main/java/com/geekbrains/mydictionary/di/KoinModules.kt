@@ -6,10 +6,30 @@ import com.geekbrains.entities.AppState
 import com.geekbrains.entities.Word
 import com.geekbrains.entities.room.WordDB
 import com.geekbrains.entities.room.WordDao
+import com.geekbrains.repo.FavoriteRepository
+import com.geekbrains.repo.FavoriteRepositoryInterface
+import com.geekbrains.repo.Repository
+import com.geekbrains.repo.RepositoryInterface
+
+import com.geekbrains.repo.datasource.DataSourceInterface
+import com.geekbrains.repo.datasource.FavoriteDataSource
+import com.geekbrains.repo.datasource.LocalDataSource
+import com.geekbrains.repo.datasource.RemoteDataSource
+import com.geekbrains.repo.datasource.retrofit.RetrofitDataSource
+import com.geekbrains.repo.datasource.room.RoomDataSource
+import com.geekbrains.repo.datasource.room.RoomFavoriteDataSource
 
 import com.geekbrains.utils.AppDispatcher
+import com.geekbrains.utils.FAVORITE_VIEWMODEL
+import com.geekbrains.utils.MAIN_VIEWMODEL
 
-import io.reactivex.rxjava3.disposables.CompositeDisposable
+import com.geekbrains.viewmodel.FavoriteInteractor
+import com.geekbrains.viewmodel.FavoriteInteractorInterface
+import com.geekbrains.viewmodel.FavoriteViewModel
+import com.geekbrains.viewmodel.InteractorInterface
+import com.geekbrains.viewmodel.MainInteractor
+import com.geekbrains.viewmodel.MainViewModel
+
 import kotlinx.coroutines.CoroutineScope
 
 import org.koin.android.ext.koin.androidContext
@@ -18,60 +38,57 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val appModel = module {
-    single<CompositeDisposable> { CompositeDisposable() }
-    single<com.geekbrains.viewmodel.InteractorInterface<AppState>> {
-        com.geekbrains.viewmodel.MainInteractor(
+
+    single<InteractorInterface<AppState>> {
+        MainInteractor(
             remoteRepository = get(named(REMOTE_REPOS)),
             localRepository = get(named(LOCAL_REPOS)),
             favoriteRepository = get(named(FAVORITE_REPOS))
         )
     }
-    single<com.geekbrains.viewmodel.FavoriteInteractorInterface<AppState>>
+    single<FavoriteInteractorInterface<AppState>>
     {
-        com.geekbrains.viewmodel.FavoriteInteractor(favoriteRepository = get(named(FAVORITE_REPOS)))
+        FavoriteInteractor(favoriteRepository = get(named(FAVORITE_REPOS)))
     }
 
     factory<AppDispatcher> { AppDispatcher() }
     factory<CoroutineScope> { CoroutineScope(get<AppDispatcher>().default) }
-    viewModel(named(com.geekbrains.utils.MAIN_VIEWMODEL))
+    viewModel(named(MAIN_VIEWMODEL))
     {
-        com.geekbrains.viewmodel.MainViewModel(
-            interactor = get(),
-            scope = get(),
-            dispatcher = get()
+        MainViewModel(
+            interactor = get()
         )
     }
-    viewModel(named(com.geekbrains.utils.FAVORITE_VIEWMODEL))
+    viewModel(named(FAVORITE_VIEWMODEL))
     {
-        com.geekbrains.viewmodel.FavoriteViewModel(
-            interactor = get(),
-            dispatcher = get()
+        FavoriteViewModel(
+            interactor = get()
         )
     }
 
-    single<com.geekbrains.repo.RepositoryInterface<List<Word>>>(named(REMOTE_REPOS)) {
-        com.geekbrains.repo.Repository(dataSource = get(named(REMOTE_DS)))
+    single<RepositoryInterface<List<Word>>>(named(REMOTE_REPOS)) {
+        Repository(dataSource = get(named(REMOTE_DS)))
     }
-    single<com.geekbrains.repo.RepositoryInterface<List<Word>>>(named(LOCAL_REPOS)) {
-        com.geekbrains.repo.Repository(dataSource = get(named(LOCAL_DS)))
+    single<RepositoryInterface<List<Word>>>(named(LOCAL_REPOS)) {
+        Repository(dataSource = get(named(LOCAL_DS)))
     }
-    single<com.geekbrains.repo.FavoriteRepositoryInterface<List<Word>>>(named(FAVORITE_REPOS)) {
-        com.geekbrains.repo.FavoriteRepository(dataSource = get(named(FAVORITE_DS)))
+    single<FavoriteRepositoryInterface<List<Word>>>(named(FAVORITE_REPOS)) {
+        FavoriteRepository(dataSource = get(named(FAVORITE_DS)))
     }
 
-    single<com.geekbrains.repo.datasource.DataSourceInterface<List<Word>>>(named(REMOTE_DS)) {
-        com.geekbrains.repo.datasource.RemoteDataSource(com.geekbrains.repo.datasource.retrofit.RetrofitDataSource())
+    single<DataSourceInterface<List<Word>>>(named(REMOTE_DS)) {
+        RemoteDataSource(RetrofitDataSource())
     }
-    single<com.geekbrains.repo.datasource.DataSourceInterface<List<Word>>>(named(LOCAL_DS)) {
-        com.geekbrains.repo.datasource.LocalDataSource(
-            com.geekbrains.repo.datasource.room.RoomDataSource(
+    single<DataSourceInterface<List<Word>>>(named(LOCAL_DS)) {
+        LocalDataSource(
+            RoomDataSource(
                 dao = get()
             )
         )
     }
-    single<com.geekbrains.repo.datasource.DataSourceInterface<List<Word>>>(named(FAVORITE_DS)) {
-        com.geekbrains.repo.datasource.FavoriteDataSource(
-            com.geekbrains.repo.datasource.room.RoomFavoriteDataSource(
+    single<DataSourceInterface<List<Word>>>(named(FAVORITE_DS)) {
+        FavoriteDataSource(
+            RoomFavoriteDataSource(
                 dao = get()
             )
         )

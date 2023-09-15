@@ -46,6 +46,4 @@ dependencies {
     implementation Koin.koin_android
     implementation Koin.koin_view_model
     implementation Koin.koin_java_compat
-
-    implementation Retrofit.adapter_rxjava
 }
