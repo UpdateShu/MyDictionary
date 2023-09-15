@@ -14,3 +14,7 @@ dependencyResolutionManagement {
 }
 rootProject.name = "MyDictionary"
 include ':app'
+include ':utils'
+include ':entities'
+include ':repo'
+include ':viewmodel'

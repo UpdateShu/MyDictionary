@@ -1,0 +1,31 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+}
+
+android {
+    namespace 'com.geekbrains.viewmodel'
+}
+
+dependencies {
+
+    implementation project(Modules.utils)
+    implementation project(Modules.entities)
+    implementation project(Modules.repo)
+
+    implementation Kotlin.core
+    implementation Design.appcompat
+    implementation Design.material
+
+    //Test
+    testImplementation TestImpl.junit
+    androidTestImplementation TestImpl.extjUnit
+    androidTestImplementation TestImpl.espresso
+
+    implementation Koin.koin_android
+    implementation Koin.koin_view_model
+    implementation Koin.koin_java_compat
+
+    implementation Retrofit.adapter_rxjava
+}
