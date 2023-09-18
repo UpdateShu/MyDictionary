@@ -17,6 +17,13 @@ import com.geekbrains.mydictionary.databinding.ActivityMainRvItemBinding
 class MainRvAdapter(val onClick: MainActivity.OnClickWord) :
     RecyclerView.Adapter<MainRvAdapter.MainRvViewHolder>() {
 
+    private val listData: MutableList<Word> = mutableListOf()
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun setDataInRv(data: List<Word>) {
+        setWords(listData, data)
+    }
+
     inner class MainRvViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(word: Word) {
             ActivityMainRvItemBinding.bind(itemView).apply {
@@ -49,15 +56,6 @@ class MainRvAdapter(val onClick: MainActivity.OnClickWord) :
                 }
             }
         }
-    }
-
-    private val listData: MutableList<Word> = mutableListOf()
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun setDataInRv(data: List<Word>) {
-        listData.clear()
-        listData.addAll(data)
-        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainRvViewHolder {

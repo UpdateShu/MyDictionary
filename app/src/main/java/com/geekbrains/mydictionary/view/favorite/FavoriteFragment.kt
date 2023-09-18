@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.geekbrains.entities.AppState
 import com.geekbrains.entities.Word
 import com.geekbrains.mydictionary.databinding.FragmentFavoriteBinding
+import com.geekbrains.mydictionary.view.WordsAdapterDelegate
 import com.geekbrains.viewmodel.FavoriteViewModel
 import com.google.android.material.snackbar.Snackbar
 
@@ -56,10 +57,12 @@ class FavoriteFragment : Fragment()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         val recyclerView = binding.rvFavorite
         recyclerView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         recyclerView.adapter = adapter
+
         viewModel.getDataViewModel().observe(viewLifecycleOwner, Observer { state ->
             rangeData(state)
         })

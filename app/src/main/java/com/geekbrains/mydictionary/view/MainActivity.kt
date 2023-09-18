@@ -18,7 +18,9 @@ import com.geekbrains.mydictionary.view.favorite.FavoriteFragment
 import com.geekbrains.utils.MAIN_VIEWMODEL
 import com.geekbrains.utils.RELOAD_LOCAL
 import com.geekbrains.utils.RELOAD_ONLINE
+import com.geekbrains.utils.viewById
 import com.geekbrains.viewmodel.MainViewModel
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 import com.google.android.material.snackbar.Snackbar
 import org.koin.androidx.scope.ScopeActivity
@@ -39,6 +41,8 @@ class MainActivity : ScopeActivity() {
     private var isOnline: Boolean = true
 
     private val viewModel: MainViewModel by viewModel(named(MAIN_VIEWMODEL))
+
+    private val favoriteFAB by viewById<FloatingActionButton>(R.id.fabFavorite)
 
     private val adapter : MainRvAdapter by lazy {
         MainRvAdapter(object : OnClickWord {
@@ -75,19 +79,21 @@ class MainActivity : ScopeActivity() {
                     })
             }
         }
-        binding.fabFavorite.setOnClickListener {
+        favoriteFAB.setOnClickListener {
             flag = !flag
             if (flag) {
                 binding.llContainer.visibility = View.GONE
                 binding.fcvContainer.visibility = View.VISIBLE
-                binding.fabFavorite.setImageResource(R.drawable.ic_baseline_favorite_24)
+
+                favoriteFAB.setImageResource(R.drawable.ic_baseline_favorite_24)
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.fcvContainer, FavoriteFragment.newInstance())
                     .commit()
             } else {
                 binding.llContainer.visibility = View.VISIBLE
                 binding.fcvContainer.visibility = View.GONE
-                binding.fabFavorite.setImageResource(R.drawable.ic_baseline_favorite_border_24)
+
+                favoriteFAB.setImageResource(R.drawable.ic_baseline_favorite_border_24)
             }
         }
         viewModel.initNetworkValidation(this@MainActivity)

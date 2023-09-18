@@ -6,6 +6,8 @@ import com.geekbrains.entities.AppState
 import com.geekbrains.entities.Word
 import com.geekbrains.entities.room.WordDB
 import com.geekbrains.entities.room.WordDao
+import com.geekbrains.mydictionary.view.MainActivity
+import com.geekbrains.mydictionary.view.favorite.FavoriteFragment
 import com.geekbrains.repo.FavoriteRepository
 import com.geekbrains.repo.FavoriteRepositoryInterface
 import com.geekbrains.repo.Repository

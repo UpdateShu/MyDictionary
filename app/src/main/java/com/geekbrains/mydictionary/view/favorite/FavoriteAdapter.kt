@@ -9,23 +9,23 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.load.resource.bitmap.FitCenter
+import com.geekbrains.entities.Word
 import com.geekbrains.mydictionary.R
 import com.geekbrains.mydictionary.databinding.ActivityMainRvItemBinding
+import com.geekbrains.mydictionary.view.setWords
 
 class FavoriteAdapter(private val onClickWord: FavoriteFragment.OnClickWord)
     : RecyclerView.Adapter<FavoriteAdapter.FavoriteViewHolder>()
 {
-    private val list: MutableList<com.geekbrains.entities.Word> = mutableListOf()
+    private val list: MutableList<Word> = mutableListOf()
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setData(data: List<com.geekbrains.entities.Word>) {
-        list.clear()
-        list.addAll(data)
-        notifyDataSetChanged()
+    fun setData(data: List<Word>) {
+        setWords(list, data)
     }
 
     inner class FavoriteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(word: com.geekbrains.entities.Word)
+        fun bind(word: Word)
         {
             ActivityMainRvItemBinding.bind(itemView).apply {
                 tvHeaderItem.text = word.word
