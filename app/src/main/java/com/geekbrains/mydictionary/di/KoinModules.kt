@@ -55,7 +55,6 @@ val mainScreen = module {
 }
 
 val appModel = module {
-
     single<FavoriteInteractorInterface<AppState>>
     {
         FavoriteInteractor(favoriteRepository = get(named(FAVORITE_REPOS)))
