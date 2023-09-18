@@ -7,7 +7,6 @@ import com.geekbrains.entities.Word
 import com.geekbrains.entities.room.WordDB
 import com.geekbrains.entities.room.WordDao
 import com.geekbrains.mydictionary.view.MainActivity
-import com.geekbrains.mydictionary.view.favorite.FavoriteFragment
 import com.geekbrains.repo.FavoriteRepository
 import com.geekbrains.repo.FavoriteRepositoryInterface
 import com.geekbrains.repo.Repository
@@ -23,7 +22,6 @@ import com.geekbrains.repo.datasource.room.RoomFavoriteDataSource
 
 import com.geekbrains.utils.AppDispatcher
 import com.geekbrains.utils.FAVORITE_VIEWMODEL
-import com.geekbrains.utils.MAIN_VIEWMODEL
 
 import com.geekbrains.viewmodel.FavoriteInteractor
 import com.geekbrains.viewmodel.FavoriteInteractorInterface
@@ -39,15 +37,25 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
+val mainScreen = module {
+    scope(named<MainActivity>()) {
+        scoped<InteractorInterface<AppState>> {
+            MainInteractor(
+                remoteRepository = get(named(REMOTE_REPOS)),
+                localRepository = get(named(LOCAL_REPOS)),
+                favoriteRepository = get(named(FAVORITE_REPOS))
+            )
+        }
+        viewModel {
+            MainViewModel(
+                interactor = get()
+            )
+        }
+    }
+}
+
 val appModel = module {
 
-    single<InteractorInterface<AppState>> {
-        MainInteractor(
-            remoteRepository = get(named(REMOTE_REPOS)),
-            localRepository = get(named(LOCAL_REPOS)),
-            favoriteRepository = get(named(FAVORITE_REPOS))
-        )
-    }
     single<FavoriteInteractorInterface<AppState>>
     {
         FavoriteInteractor(favoriteRepository = get(named(FAVORITE_REPOS)))
@@ -55,12 +63,7 @@ val appModel = module {
 
     factory<AppDispatcher> { AppDispatcher() }
     factory<CoroutineScope> { CoroutineScope(get<AppDispatcher>().default) }
-    viewModel(named(MAIN_VIEWMODEL))
-    {
-        MainViewModel(
-            interactor = get()
-        )
-    }
+
     viewModel(named(FAVORITE_VIEWMODEL))
     {
         FavoriteViewModel(
