@@ -5,7 +5,10 @@ object Config {
     const val compile_sdk = 33
     const val min_sdk = 29
     const val target_sdk = 33
+
     val java_version = JavaVersion.VERSION_17
+    val jvm_target = "17"
+    val test_runner = "androidx.test.runner.AndroidJUnitRunner"
 }
 
 object Releases {

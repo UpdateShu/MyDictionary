@@ -6,33 +6,9 @@ plugins {
 
 android {
     namespace 'com.geekbrains.mydictionary'
-    compileSdkVersion Config.compile_sdk
 
     defaultConfig {
         applicationId 'com.geekbrains.mydictionary'
-        minSdkVersion Config.min_sdk
-        targetSdkVersion Config.target_sdk
-        versionCode Releases.version_code
-        versionName Releases.version_name
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
-                    'proguard-rules.pro'
-        }
-    }
-    compileOptions {
-        sourceCompatibility Config.java_version
-        targetCompatibility Config.java_version
-    }
-    kotlinOptions {
-        jvmTarget = '17'
-    }
-    buildFeatures {
-        viewBinding = true
-        buildConfig = true
     }
 }
 
