@@ -1,47 +1,58 @@
 package com.geekbrains.mydictionary.view
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+
+import com.geekbrains.entities.AppState
 import com.geekbrains.entities.Word
 
 import com.geekbrains.mydictionary.R
 import com.geekbrains.mydictionary.databinding.ActivityMainBinding
 import com.geekbrains.mydictionary.view.favorite.FavoriteFragment
 
-import com.geekbrains.utils.MAIN_VIEWMODEL
+import com.geekbrains.utils.RELOAD_LOCAL
+import com.geekbrains.utils.RELOAD_ONLINE
+import com.geekbrains.utils.viewById
+import com.geekbrains.viewmodel.MainViewModel
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 import com.google.android.material.snackbar.Snackbar
+import org.koin.android.ext.android.inject
+import org.koin.androidx.scope.ScopeActivity
 
-import org.koin.core.qualifier.named
-import org.koin.androidx.viewmodel.ext.android.viewModel
-
-class MainActivity : AppCompatActivity(), ViewInterface {
+class MainActivity : ScopeActivity() {
     interface OnClickWord {
-        fun onClickWord(word: com.geekbrains.entities.Word)
-        fun onClickToFavorite(word: com.geekbrains.entities.Word, favoriteState: Boolean)
+        fun onClickWord(word: Word)
+        fun onClickToFavorite(word: Word, favoriteState: Boolean)
     }
 
     private var flag: Boolean = false
     private var searchWord: String? = null
     private lateinit var binding: ActivityMainBinding
 
-    private val viewModel: com.geekbrains.viewmodel.MainViewModel by viewModel(named(MAIN_VIEWMODEL))
+    private var isOnline: Boolean = true
 
-    private val adapter = MainRvAdapter(object : OnClickWord {
-        override fun onClickWord(word: Word) {
-            showError(word.word, false)
-        }
+    private lateinit var viewModel: MainViewModel
 
-        override fun onClickToFavorite(word: Word, favoriteState: Boolean) {
-            word.isFavorite = favoriteState
-            viewModel.setFavorite(word)
-        }
-    })
+    private val favoriteFAB by viewById<FloatingActionButton>(R.id.fabFavorite)
+
+    private val adapter : MainRvAdapter by lazy {
+        MainRvAdapter(object : OnClickWord {
+            override fun onClickWord(word: Word) {
+                showError(word.word, false)
+            }
+
+            override fun onClickToFavorite(word: Word, favoriteState: Boolean) {
+                word.isFavorite = favoriteState
+                viewModel.setFavorite(word)
+            }
+        })
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,36 +70,40 @@ class MainActivity : AppCompatActivity(), ViewInterface {
 
             searchWord = binding.etSearchWord.text?.toString()
             if (!searchWord.isNullOrEmpty()) {
-                viewModel.getDataViewModel(searchWord!!,
-                    com.geekbrains.utils.isOnline(this@MainActivity)
-                )
+                viewModel.getDataViewModel(searchWord!!)
                     .observe(this, Observer { state ->
                         rangeData(state)
                     })
             }
         }
-        binding.fabFavorite.setOnClickListener {
+        favoriteFAB.setOnClickListener {
             flag = !flag
             if (flag) {
                 binding.llContainer.visibility = View.GONE
                 binding.fcvContainer.visibility = View.VISIBLE
-                binding.fabFavorite.setImageResource(R.drawable.ic_baseline_favorite_24)
+
+                favoriteFAB.setImageResource(R.drawable.ic_baseline_favorite_24)
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.fcvContainer, FavoriteFragment.newInstance())
                     .commit()
             } else {
                 binding.llContainer.visibility = View.VISIBLE
                 binding.fcvContainer.visibility = View.GONE
-                binding.fabFavorite.setImageResource(R.drawable.ic_baseline_favorite_border_24)
+
+                favoriteFAB.setImageResource(R.drawable.ic_baseline_favorite_border_24)
             }
         }
+        val model: MainViewModel by inject()
+        viewModel = model
+        viewModel.initNetworkValidation(this@MainActivity)
+            .observe(this, Observer { state -> rangeData(state) })
     }
 
-    override fun rangeData(state: com.geekbrains.entities.AppState) {
+    fun rangeData(state: AppState) {
         when (state) {
-            is com.geekbrains.entities.AppState.Success -> {
+            is AppState.Success -> {
                 val receivedData = state.data
-                if (!receivedData.isNullOrEmpty()) {
+                if (receivedData.isNotEmpty()) {
                     showData(receivedData)
                 } else {
                     showError(
@@ -96,16 +111,21 @@ class MainActivity : AppCompatActivity(), ViewInterface {
                     )
                 }
             }
-            is com.geekbrains.entities.AppState.Loading -> {
+            is AppState.Loading -> {
                 binding.pbSearch.isVisible = state.progress == null
             }
-            is com.geekbrains.entities.AppState.Error -> {
+            is AppState.Error -> {
                 showError(state.error, true, isOnline = true)
+            }
+            is AppState.OnlineChanged -> {
+                isOnline = state.isOnline
+                showError(if (isOnline) "Online" else "Offline", true, isOnline)
+                Log.v("MyDictionary", isOnline.toString())
             }
         }
     }
 
-    private fun showData(data: List<com.geekbrains.entities.Word>) {
+    private fun showData(data: List<Word>) {
         adapter.setDataInRv(data)
     }
 
@@ -113,17 +133,17 @@ class MainActivity : AppCompatActivity(), ViewInterface {
         val sb = Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG)
         if (isAction) {
             if (isOnline) {
-                sb.setAction(com.geekbrains.utils.RELOAD_ONLINE) {
+                sb.setAction(RELOAD_ONLINE) {
                     if (!searchWord.isNullOrEmpty()) {
-                        viewModel.getDataViewModel(searchWord!!, true)
+                        viewModel.getDataViewModel(searchWord!!)
                     } else {
                         showError(resources.getString(R.string.error_empty), false)
                     }
                 }
             } else {
-                sb.setAction(com.geekbrains.utils.RELOAD_LOCAL) {
+                sb.setAction(RELOAD_LOCAL) {
                     if (!searchWord.isNullOrEmpty()) {
-                        viewModel.getDataViewModel(searchWord!!, false)
+                        viewModel.getDataViewModel(searchWord!!)
                     } else {
                         showError(resources.getString(R.string.error_empty), false)
                     }

@@ -6,60 +6,46 @@ import com.geekbrains.entities.room.WordDao
 
 import com.geekbrains.repo.datasource.DataSourceInterface
 
-class RoomFavoriteDataSource(private val dao: WordDao)
-    : DataSourceInterface<List<Word>>
-{
-    override suspend fun getDataBySearchWord(word: String): List<Word>
-    {
-        val result: MutableList<Word> = mutableListOf()
-        dao.findFavoriteWord(word).forEach {
-            val word = Word(
-                id = it.fId.toString(),
-                word = it.fWord,
-                meanings = convertMeanings(it.fTransient, it.fImageUrl)
-            )
-            result.add(word)
+class RoomFavoriteDataSource(private val dao: WordDao) : DataSourceInterface<List<Word>> {
+
+    override suspend fun getDataBySearchWord(word: String): List<Word> {
+        return dao.findFavoriteWord(word).map { favoriteWordEntity ->
+            Word(favoriteWordEntity.fId.toString(),
+                favoriteWordEntity.fWord,
+                Word.Meanings(
+                    imageUrl = favoriteWordEntity.fImageUrl ?: "",
+                    translation = Word.Meanings.Translation(favoriteWordEntity.fTransient ?: "")
+                ))
         }
-        return result
     }
 
-    override suspend fun setDataLocal(words: List<Word>)
-    {
-        val word = FavoriteWordEntity(
-            fId = words[0].id.toInt(),
-            fWord = words[0].word,
-            fTransient = words[0].meanings.translation?.text,
-            fImageUrl = words[0].meanings.imageUrl
+    override suspend fun setDataLocal(words: List<Word>) {
+        val word = words.first()
+        val favoriteEntity = FavoriteWordEntity(
+            fId = word.id.toInt(),
+            fWord = word.word,
+            fTransient = word.meanings?.translation?.text,
+            fImageUrl = word.meanings?.imageUrl
         )
-        if (words[0].isFavorite) {
-            dao.addToFavorite(word)
+        if (word.isFavorite) {
+            dao.addToFavorite(favoriteEntity)
         } else {
-            dao.deleteFavorite(word)
+            dao.deleteFavorite(favoriteEntity)
         }
     }
 
-    override suspend fun getData(): List<Word>
-    {
-        val result: MutableList<Word> = mutableListOf()
-        dao.getAllFavorite().forEach {
-            val word = Word(
-                id = it.fId.toString(),
-                word = it.fWord,
-                meanings = convertMeanings(it.fTransient, it.fImageUrl)
-            )
-            result.add(word)
+    override suspend fun getData(): List<Word> {
+        return dao.getAllFavorite().map { favoriteWordEntity ->
+            Word(favoriteWordEntity.fId.toString(),
+                favoriteWordEntity.fWord,
+                Word.Meanings(
+                    imageUrl = favoriteWordEntity.fImageUrl ?: "",
+                    translation = Word.Meanings.Translation(favoriteWordEntity.fTransient ?: "")
+                ))
         }
-        return result
     }
 
-    private fun convertMeanings(translation: String?, fImageUrl: String?)
-        = Word.Meanings(
-            imageUrl = "https:$fImageUrl",
-            translation = Word.Meanings.Translation(translation)
-        )
-
-    override suspend fun deleteData(idWord: Int)
-    {
+    override suspend fun deleteData(idWord: Int) {
         val word = dao.getWord(idWord)
         dao.deleteFavorite(word)
     }

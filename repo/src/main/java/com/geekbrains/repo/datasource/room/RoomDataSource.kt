@@ -4,65 +4,33 @@ import com.geekbrains.entities.Word
 import com.geekbrains.entities.room.WordDao
 import com.geekbrains.entities.room.WordEntity
 
+import com.geekbrains.repo.datasource.DataSourceInterface
+import com.geekbrains.repo.datasource.convertWordEntityToWords
+
 class RoomDataSource(private val dao: WordDao)
-    : com.geekbrains.repo.datasource.DataSourceInterface<List<Word>>
+    : DataSourceInterface<List<Word>>
 {
-    override suspend fun getDataBySearchWord(word: String): List<Word> {
-        val searchList = dao.findWord(word)
-        val result: MutableList<Word> = mutableListOf()
-        searchList.forEach {
-            val word = Word(
-                id = it.wId,
-                word = it.text,
-                meanings = convertMeanings(it.meanings)
-            )
-            result.add(word)
-        }
-        return result
-    }
+    override suspend fun getDataBySearchWord(word: String)
+        = convertWordEntityToWords(dao.findWord(word))
 
-    private fun convertMeanings(meanings: WordEntity.Meaning): Word.Meanings
-    {
-        val result: MutableList<Word.Meanings> = mutableListOf()
-        return Word.Meanings(
-            imageUrl = "https:" + meanings.imageUrl,
-            translation = convertTranslation(meanings.translation)
-        )
-    }
-
-    private fun convertTranslation(translation: WordEntity.Meaning.Translation)
-        = Word.Meanings.Translation(translation.translationText)
+    override suspend fun getData()
+        = convertWordEntityToWords(dao.getAllWord())
 
     override suspend fun setDataLocal(words: List<Word>)
     {
-        words.forEach {
+        words.forEach {word ->
             val wordCash = WordEntity(
-                wId = it.id,
-                text = it.word,
-                meanings = convertMeamings(it.meanings)
+                wId = word.id,
+                text = word.word,
+                meanings = word.meanings?.let {
+                    WordEntity.Meaning(
+                        mId = 0,
+                        imageUrl = it.imageUrl,
+                        translation = WordEntity.Meaning.Translation(it.translation?.text))
+                } ?: null
             )
             dao.cashWord(wordCash)
         }
-    }
-
-    private fun convertMeamings(meanings: Word.Meanings)
-        = WordEntity.Meaning(
-            mId = 0,
-            imageUrl = meanings.imageUrl,
-            translation = WordEntity.Meaning.Translation(meanings.translation?.text))
-
-    override suspend fun getData(): List<Word> {
-        val list = dao.getAllWord()
-        val result: MutableList<Word> = mutableListOf()
-        list.forEach {
-            val word = Word(
-                id = it.wId,
-                word = it.text,
-                meanings = convertMeanings(it.meanings)
-            )
-            result.add(word)
-        }
-        return result
     }
 
     override suspend fun deleteData(idWord: Int) {

@@ -7,9 +7,8 @@ import com.geekbrains.repo.FavoriteRepositoryInterface
 class FavoriteInteractor(private val favoriteRepository: FavoriteRepositoryInterface<List<Word>>)
     : FavoriteInteractorInterface<AppState>
 {
-    override suspend fun getAllFavorite(): List<Word> {
-        return favoriteRepository.getAllFavorite()
-    }
+
+    override suspend fun getAllFavorite() = favoriteRepository.getAllFavorite()
 
     override suspend fun deleteFavorite(idWord: Int) {
         favoriteRepository.deleteFavorite(idWord)

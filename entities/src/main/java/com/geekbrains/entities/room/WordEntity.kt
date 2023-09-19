@@ -11,21 +11,18 @@ data class WordEntity(
     val wId: String,
 
     @Embedded
-    val meanings: Meaning,
+    val meanings: Meaning?,
 
     @ColumnInfo(name = "text")
-    val text: String)
+    val text: String?)
 {
     data class Meaning(
         val mId: Int,
         val imageUrl: String?,
 
         @Embedded
-        val translation: Translation
-    )
-    {
-        class Translation(
-            val translationText: String?
-        )
-    }
+        val translation: Translation)
+        {
+            class Translation(val translationText: String?)
+        }
 }

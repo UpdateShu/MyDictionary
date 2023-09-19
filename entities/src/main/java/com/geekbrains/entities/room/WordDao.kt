@@ -10,13 +10,13 @@ import androidx.room.Query
 interface WordDao
 {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun cashWord(vararg word: com.geekbrains.entities.room.WordEntity)
+    suspend fun cashWord(vararg word: WordEntity)
 
     @Query("SELECT * FROM WordEntity")
-    suspend fun getAllWord(): List<com.geekbrains.entities.room.WordEntity>
+    suspend fun getAllWord(): List<WordEntity>
 
     @Query("SELECT * FROM WordEntity WHERE text LIKE '%' || :word || '%'")
-    suspend fun findWord(word: String): List<com.geekbrains.entities.room.WordEntity>
+    suspend fun findWord(word: String): List<WordEntity>
 
     @Query("SELECT * FROM FavoriteWordEntity WHERE fWord LIKE '%' || :word || '%'")
     suspend fun findFavoriteWord(word: String): List<FavoriteWordEntity>

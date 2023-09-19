@@ -41,8 +41,6 @@ dependencies {
     implementation Room.room_ktx
     kapt Room.compiler
 
-    implementation Retrofit.adapter_rxjava
-
     //Test
     testImplementation TestImpl.junit
     androidTestImplementation TestImpl.extjUnit
