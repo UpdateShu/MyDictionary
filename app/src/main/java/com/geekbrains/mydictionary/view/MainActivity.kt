@@ -1,9 +1,16 @@
 package com.geekbrains.mydictionary.view
 
+import android.animation.ObjectAnimator
+import android.os.Build
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
 import android.view.View
+import android.view.ViewTreeObserver
+import android.view.animation.AnticipateInterpolator
 import android.view.inputmethod.InputMethodManager
+import androidx.annotation.RequiresApi
+import androidx.core.animation.doOnEnd
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,6 +32,10 @@ import com.google.android.material.snackbar.Snackbar
 import org.koin.android.ext.android.inject
 import org.koin.androidx.scope.ScopeActivity
 
+private const val SLIDE_LEFT_DURATION = 1000L
+private const val COUNTDOWN_DURATION = 2000L
+private const val COUNTDOWN_INTERVAL = 1000L
+
 class MainActivity : ScopeActivity() {
     interface OnClickWord {
         fun onClickWord(word: Word)
@@ -44,6 +55,15 @@ class MainActivity : ScopeActivity() {
     private val adapter : MainRvAdapter by lazy {
         MainRvAdapter(object : OnClickWord {
             override fun onClickWord(word: Word) {
+                startActivity(
+                    DescriptionActivity.getIntent(
+                        this@MainActivity,
+                        word.word,
+                        word.meanings?.translation?.text ?: "",
+                        word.meanings?.imageUrl ?: ""
+                    )
+                )
+
                 showError(word.word, false)
             }
 
@@ -97,6 +117,7 @@ class MainActivity : ScopeActivity() {
         viewModel = model
         viewModel.initNetworkValidation(this@MainActivity)
             .observe(this, Observer { state -> rangeData(state) })
+        setDefaultSplashScreen()
     }
 
     fun rangeData(state: AppState) {
@@ -152,10 +173,66 @@ class MainActivity : ScopeActivity() {
         }
         sb.show()
     }
+
     private fun hideKeyBoard() {
         this.currentFocus?.let {
             val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(it.windowToken, 0)
         }
+    }
+
+    private fun setDefaultSplashScreen() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            setSplashScreenHideAnimation()
+            setSplashScreenDuration()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    private fun setSplashScreenHideAnimation() {
+        splashScreen.setOnExitAnimationListener {splashScreenView ->
+            val slideDown = ObjectAnimator.ofFloat(
+                splashScreenView,
+                View.TRANSLATION_Y,
+                -splashScreenView.width.toFloat(),
+                0f
+            )
+
+            slideDown.interpolator = AnticipateInterpolator()
+            slideDown.duration = SLIDE_LEFT_DURATION
+
+            slideDown.doOnEnd{
+                splashScreenView.remove()
+            }
+            slideDown.start()
+        }
+    }
+
+    private fun setSplashScreenDuration() {
+        var isHideSplashScreen = false
+
+        object : CountDownTimer(COUNTDOWN_DURATION, COUNTDOWN_INTERVAL) {
+            override fun onTick(p0: Long) {
+                // Nothing to do
+            }
+
+            override fun onFinish() {
+                isHideSplashScreen = true
+            }
+        }.start()
+
+        val content: View = findViewById(android.R.id.content)
+        content.viewTreeObserver.addOnPreDrawListener(
+            object : ViewTreeObserver.OnPreDrawListener {
+                override fun onPreDraw(): Boolean {
+                    return if (isHideSplashScreen) {
+                        content.viewTreeObserver.removeOnPreDrawListener(this)
+                        true
+                    } else {
+                        false
+                    }
+                }
+            }
+        )
     }
 }
