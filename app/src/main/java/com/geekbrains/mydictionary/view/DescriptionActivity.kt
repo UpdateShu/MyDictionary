@@ -4,18 +4,16 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.RenderEffect
 import android.graphics.Shader
-import android.graphics.drawable.Drawable
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
 import androidx.annotation.RequiresApi
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.Target
+import androidx.appcompat.app.AppCompatActivity
+
+import coil.ImageLoader
+import coil.request.LoadRequest
+import coil.transform.CircleCropTransformation
+
 import com.geekbrains.mydictionary.R
 import com.geekbrains.mydictionary.databinding.ActivityDescriptionBinding
 
@@ -29,40 +27,42 @@ class DescriptionActivity : AppCompatActivity() {
         binding = ActivityDescriptionBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        /*binding.descriptionScreenSwipeRefreshLayout.setOnRefreshListener {
-            startLoadingOrShowError()
-        }*/
-
         val bundle = intent.extras
         binding.descriptionHeader.text = bundle?.getString(WORD_EXTRA)
         binding.descriptionTextview.text = bundle?.getString(DESCRIPTION_EXTRA)
 
         val imageLink = bundle?.getString(URL_EXTRA)
-        if (imageLink.isNullOrBlank()) {
-            //stopRefreshAnimationIfNeeded()
-        } else {
-            //usePicassoToLoadPhoto(binding.descriptionImageview, imageLink)
-            useGlideToLoadPhoto(binding.descriptionImageview, imageLink)
-            //useCoilToLoadPhoto(binding.descriptionImageview, imageLink)
+        if (!imageLink.isNullOrBlank()) {
+            useCoilToLoadPhoto(binding.descriptionImageview, imageLink)
         }
     }
 
-    /*private fun stopRefreshAnimationIfNeeded() {
-        if (binding.descriptionScreenSwipeRefreshLayout.isRefreshing) {
-            binding.descriptionScreenSwipeRefreshLayout.isRefreshing = false
-        }
-    }*/
+    @RequiresApi(Build.VERSION_CODES.S)
+    private fun useCoilToLoadPhoto(imageView: ImageView, imageLink: String) {
+        val request = LoadRequest.Builder(this)
+            .data(imageLink)
+            .target(
+                onStart = {},
+                onSuccess = { result ->
+                    imageView.setImageDrawable(result)
 
-    private fun useGlideToLoadPhoto(imageView: ImageView, imageLink: String) {
-        Glide.with(imageView)
-            .load("$imageLink")
-            .apply(
-                RequestOptions()
-                    .placeholder(R.drawable.ic_no_photo_vector)
-                    .centerCrop()
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        val blurEffect = RenderEffect.createBlurEffect(15f, 0f, Shader.TileMode.MIRROR)
+                        imageView.setRenderEffect(blurEffect)
+                    }
+                },
+                onError = {
+                    imageView.setImageResource(R.drawable.ic_load_error_vector)
+                }
             )
-            .into(imageView)
+            .transformations(
+                CircleCropTransformation(),
+            )
+            .build()
+
+        ImageLoader(this).execute(request)
     }
+
 
     companion object {
 
