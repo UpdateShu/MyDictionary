@@ -76,10 +76,6 @@ object Kotlin {
     const val core = "androidx.core:core-ktx:${Versions.core}"
 }
 
-object IO {
-    const val io_rx_java = "io.reactivex.rxjava3:rxjava:3.0.0:${Versions.io_rx}"
-}
-
 object Retrofit {
     const val retrofit = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
     const val converter_gson = "com.squareup.retrofit2:converter-gson:${Versions.converterGson}"

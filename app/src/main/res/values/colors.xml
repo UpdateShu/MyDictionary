@@ -17,4 +17,6 @@
     <color name="color_black">#313131</color>
     <color name="color_white">#FFFFFF</color>
     <color name="color_gray">#66000000</color>
+    <color name="color_green">#C8E6C9</color>
+    <color name="color_purple">#9C27B0</color>
 </resources>
