@@ -7,6 +7,7 @@ import com.geekbrains.entities.Word
 import com.geekbrains.entities.room.WordDB
 import com.geekbrains.entities.room.WordDao
 import com.geekbrains.mydictionary.view.MainActivity
+import com.geekbrains.repo.FakeRepository
 import com.geekbrains.repo.FavoriteRepository
 import com.geekbrains.repo.FavoriteRepositoryInterface
 import com.geekbrains.repo.Repository
@@ -40,9 +41,14 @@ import org.koin.dsl.module
 val mainScreen = module {
     scope(named<MainActivity>()) {
         scoped<InteractorInterface<AppState>> {
-            MainInteractor(
+            /*MainInteractor(
                 remoteRepository = get(named(REMOTE_REPOS)),
                 localRepository = get(named(LOCAL_REPOS)),
+                favoriteRepository = get(named(FAVORITE_REPOS))
+            )*/
+            MainInteractor(
+                remoteRepository = FakeRepository(),
+                localRepository = FakeRepository(),
                 favoriteRepository = get(named(FAVORITE_REPOS))
             )
         }

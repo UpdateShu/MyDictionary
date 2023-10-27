@@ -19,9 +19,15 @@ dependencies {
     implementation Design.material
 
     //Test
+    implementation 'androidx.test.ext:junit-ktx:1.1.5'
+    testImplementation 'androidx.arch.core:core-testing:2.2.0'
+    testImplementation 'org.robolectric:robolectric:4.10.3'
+
     testImplementation TestImpl.junit
     androidTestImplementation TestImpl.extjUnit
-    androidTestImplementation TestImpl.espresso
+    androidTestImplementation TestImpl.espressoCore
+    androidTestImplementation TestImpl.espressoIntents
+    testImplementation(TestImpl.corountinesTest)
 
     implementation Koin.koin_android
     implementation Koin.koin_view_model

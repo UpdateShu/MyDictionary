@@ -19,7 +19,8 @@ dependencies {
     //Test
     testImplementation TestImpl.junit
     androidTestImplementation TestImpl.extjUnit
-    androidTestImplementation TestImpl.espresso
+    androidTestImplementation TestImpl.espressoCore
+    androidTestImplementation TestImpl.espressoIntents
 
     //Retrofit
     implementation Retrofit.converter_gson
