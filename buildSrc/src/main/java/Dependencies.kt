@@ -63,7 +63,10 @@ object Versions {
     //Test
     const val jUnit = "4.13.2"
     const val extjUnit = "1.1.5"
-    const val espressoCore = "3.2.0"
+
+    const val espressoCore = "3.3.0"
+    const val espressoIntents = "3.3.0"
+    const val corountinesTest = "1.4.3"
 }
 
 object Design {
@@ -113,5 +116,8 @@ object Room {
 object TestImpl {
     const val junit = "junit:junit:${Versions.jUnit}"
     const val extjUnit = "androidx.test.ext:junit:${Versions.extjUnit}"
-    const val espresso = "androidx.test.espresso:espresso-core:${Versions.espressoCore}"
+
+    const val espressoCore = "androidx.test.espresso:espresso-core:${Versions.espressoCore}"
+    const val espressoIntents = "androidx.test.espresso:espresso-intents:${Versions.espressoIntents}"
+    const val corountinesTest = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.corountinesTest}"
 }
