@@ -1,8 +1,10 @@
 package com.geekbrains.viewmodel
 
+import android.content.Context
 import android.os.Build
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
+import androidx.test.core.app.ApplicationProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.runner.RunWith
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -16,9 +18,12 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.koin.core.qualifier.named
+
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.verify
+import org.mockito.Mockito.times
 import org.mockito.MockitoAnnotations
 import org.robolectric.annotation.Config
 
@@ -38,10 +43,42 @@ class MainViewModelTest {
 
     private lateinit var mainViewModel: MainViewModel
 
+    private lateinit var context: Context
+
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         mainViewModel = MainViewModel(mainInteractor)
+        context = ApplicationProvider.getApplicationContext()
+    }
+
+    @Test
+    suspend fun mainViewModel_Test() {
+        Mockito.`when`(mainInteractor.getDataInteractor(SEARCH_QUERY, true)).thenReturn(
+            getWords()
+        )
+        mainViewModel.getDataViewModel(SEARCH_QUERY)
+        verify(mainInteractor, times(1)).getDataInteractor(SEARCH_QUERY, true)
+    }
+
+    fun initNetworkValidation_Test() {
+        testCoroutineRule.runBlockingTest {
+            val observer = Observer<AppState> {}
+            val liveData = mainViewModel.getDataViewModel()
+
+            liveData.observeForever(observer)
+            mainViewModel.initNetworkValidation(context)
+            Assert.assertNotNull(liveData.value)
+        }
+    }
+
+    fun setFavorite_Test() {
+        testCoroutineRule.runBlockingTest {
+            val word = mock(Word::class.java)
+            mainViewModel.setFavorite(word)
+
+            verify(mainInteractor, times(1)).setDataFavorite(word)
+        }
     }
 
     @Test
